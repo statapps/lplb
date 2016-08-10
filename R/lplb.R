@@ -6,7 +6,7 @@
 library(survival)
 library(MASS)
 
-source('lplb_basicFunctions.R')
+#source('lplb_basicFunctions.R')
 
 lplb <- function(x, ...) UseMethod("lplb")
 
