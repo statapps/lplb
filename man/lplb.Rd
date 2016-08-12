@@ -63,14 +63,11 @@ An object of class "lplb" is a list containing at least the following components
   \item{pvalue}{the p-value of the hypothesis that beta_w is a constant}
 }
 \references{
-Chen, B. E., Jiang, W. and Tu, D. (2014). A hierarchical Bayes model for biomarker subset effects in clinical trials. Computational Statistics and Data Analysis. vol 71, page 324-334.
 }
 \author{
-Bingshu E. Chen (bingshu.chen@queensu.ca)
+Bingshu E. Chen (bingshu.chen@queensu.ca), Siwei Zhang
 }
-\note{
-The logistic regression part are based on codes wrote by Tian Fang.
-}
+
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
@@ -79,32 +76,8 @@ The logistic regression part are based on codes wrote by Tian Fang.
 \code{\link{lplb.control}}
 }
 \examples{
-##
-## Generate a random data set
-n = 300
-b = c(0.5, 1, 1.5)
-data = surv.gendat(n, c0 = 0.40, beta = b)
-age = runif(n, 0, 1)*100
-tm = data[, 1]
-status = data[, 2]
-trt = data[, 3]
-ki67 = data[, 4]
-## fit a biomarker threshold survival model with one single cut point
-
-fit = lplb(Surv(tm, status)~ki67+trt+age, interaction = TRUE, B=5, R=10)
-
-
-## here B=5 and R=10 is used for test run. In general, B > 500 and R > 2000 is
-## recommend for the analysis of biomarker variable. To fit a model with
-## two cut points, use:
-##
-##     fit = lplb(Surv(tm, status)~bmk+trt+age, B = 500,  R = 2000, c.n = 2)
-##
-## To print the output, use
-##
-       print(fit)
-##
+## fit1 = lplb(Surv(time, status)~z1 + z2 + w, data = dat, B = B, p1 = 2)
+## print(fit1)
 }
 \keyword{ Biomarker interaction }
-\keyword{ Predictive effect}
-\keyword{ Prognostic effect}
+
