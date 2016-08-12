@@ -3,7 +3,6 @@
 \alias{lplb}
 \alias{lplb.default}
 \alias{lplb.formula}
-\alias{lplb.control}
 
 \title{
 Local partial likelihood bootstrap (LPLB) method to fit biomarker Models
@@ -45,7 +44,7 @@ If not found in data, the variables are taken from environment(formula).}
   \item{\dots}{additional arguments to be passed to the low level regression fitting functions (see below).} %- do we need this??????????
 }
 \details{
-'biomarker' is a Biomarker variable. This variable is required and shall be the last dependent variable in the formula.
+Here 'w' is a Biomarker variable. This variable is required and shall be the last dependent variable in the formula.
 
 'x.cdf' is a function that maps biomarker values to interval (0, 1) using its empirical cumulative distribution function.
 }
@@ -63,17 +62,21 @@ An object of class "lplb" is a list containing at least the following components
   \item{pvalue}{the p-value of the hypothesis that beta_w is a constant}
 }
 \references{
+Zhang, S., Jiang, W. and Chen, B. E. (2016). Estimate and test of multivariate covariates 
+and biomarker interactions for survival data based on local partial likelihood. Manuscript in preparation. 
 }
 \author{
-Bingshu E. Chen (bingshu.chen@queensu.ca), Siwei Zhang
+Siwei Zhang and Bingshu E. Chen (bingshu.chen@queensu.ca)
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
-%% code{\link{prolik}},
+\code{\link{bhm}},
 \code{\link{coxph}},
 \code{\link{lplb.control}}
+\code{\link{lplb.print}}
+\code{\link{lplb.plot}}
 }
 \examples{
 ## fit1 = lplb(Surv(time, status)~z1 + z2 + w, data = dat, B = B, p1 = 2)
