@@ -1,4 +1,4 @@
-\name{print}
+\name{print.lplb}
 \alias{print.lplb}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -14,14 +14,13 @@ print are used to provide a short summary of lplb outputs.
 \arguments{
   \item{x}{a lplb class returned from lplb fit}
   \item{\dots}{other options used in print()}
-  \item{object}{object returned from lplb fit}
 }
 \details{
   print.lplb is called to print object or summary of object from the lplb model \code{\link{lplb}}.
 
   The default method, print.default has its own help page. Use methods("print") to get all the methods for the print generic.
 }
-\author{Bingshu E. Chen and Siwei Zhang}
+\author{Siwei Zhand and Bingshu E. Chen}
 \seealso{
  The default method for print \code{\link{print.default}},
 \code{\link{lplb}}

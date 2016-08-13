@@ -11,8 +11,7 @@ Local partial likelihood bootstrap (LPLB) method to fit biomarker Models
 \{lplb\} is a R package for local partial likelihood estimation (LPLE) (Fan et al., 2006) of the coefficients of covariates with interactions of the biomarker W, and hypothesis test of whether the relationships between covariates and W are significant, by using bootstrap method.
 }
 \usage{
-lplb(x, y, control, ...)
-
+\method{lplb}{default}(x, y, control, ...)
 \method{lplb}{formula}(formula, data=list(...), control = list(...), ...)
 
 # use
@@ -69,6 +68,10 @@ and biomarker interactions for survival data based on local partial likelihood. 
 Siwei Zhang and Bingshu E. Chen (bingshu.chen@queensu.ca)
 }
 
+\note{
+This package was build on code developed by Yicong Liu for simple treatment-biomaker interaction model.
+}
+
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
@@ -82,5 +85,4 @@ Siwei Zhang and Bingshu E. Chen (bingshu.chen@queensu.ca)
 ## fit1 = lplb(Surv(time, status)~z1 + z2 + w, data = dat, B = B, p1 = 2)
 ## print(fit1)
 }
-\keyword{ Biomarker interaction }
-
+\keyword{ Biomarker interaction, local partial likelihood, bootstrap}

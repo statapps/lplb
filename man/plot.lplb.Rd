@@ -10,11 +10,12 @@ Draw a series of plots of beta_w vs. w_est for each dependent variable with inte
 \code{\link{lplb.control}}
 }
 \usage{
-plot.lplb(x)
+\method{plot}{lplb}(x, ...)
 }
 
 \arguments{
   \item{x}{a lplb class returned from lplb fit}
+  \item{\dots}{other options used in plot()}
 }
 \details{
 plot.lplb is called to plot the relationships between beta_w and w_est for each dependent variable with interactions with the biomarker w, from the \code{\link{lplb}} fit model.

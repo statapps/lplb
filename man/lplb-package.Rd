@@ -3,14 +3,15 @@
 \alias{lplb-doc}
 \docType{package}
 \title{
-Biomarker Threshold Models
+Local Partial Likelihood Boostrap test
 }
 \description{
-This package fits a threshold regression model for predictive and prognostic biomarker effect 
-for binary data and survival data with an unknown cutoff point of biomarker.
+This package fits a multivariable local partial likelihood model for covariate-biomarker 
+interaction with survival data.
 }
 \details{
-"lplb" is a R package for Biomarker Threshold Models.
+"lplb" is a R package for multivariate covariate-biomarker interaction uisng local partial likelihood method.
+
 Please use the following steps to install 'lplb' package:
 
 1. First, you need to install the 'devtools' package. You can skip this step if you have 'devtools' installed in your R. Invoke R and then type
@@ -26,21 +27,24 @@ Please use the following steps to install 'lplb' package:
   install_github("statapps/lplb")
 
 
-"lplb" uses different statistical methods to identify cut-point 
-(thershold parameter) for the biomarker in either generalized 
-linear models or Cox proportional hazards model.
+"lplb" uses local partial likelihood to etimate covariate-biomarker interactions 
+and bootstrap method to test the significance of the interactions.
 }
-\author{Bingshu E. Chen
+\author{Siwei Zhang and Bingshu E. Chen
 
 Maintainer: Bingshu E. Chen <bingshu.chen@queensu.ca>
 }
 \references{
-Chen, B. E., Jiang, W. and Tu, D. (2014). A hierarchical Bayes model for biomarker subset effects in clinical trials. Computational Statistics and Data Analysis. vol 71, page 324-334.
+1. Zhang, S., Jiang, W. and Chen, B. E. (2016). Estimate and test of multivariate covariates 
+and biomarker interactions for survival data based on local partial likelihood. Manuscript in
+ preparation.
+
+2. Liu, Y., Jiang, W. and Chen, B. E. (2015). Testing for treatment-biomarker interaction based on local partial-likelihood. Statistics in Medicine. 34, 3516-3530.
 }
 \keyword{lplb}
 \seealso{
 \code{coxph, }
-\code{glm, }
+\code{bhm, }
 \code{survival}
 }
 \examples{

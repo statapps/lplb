@@ -7,7 +7,7 @@ Auxiliary function for \code{\link{lplb}} fitting.
 Typically only used internally by 'lplb', but may be used to construct a control argument to either function. 
 }
 \usage{
-  lplb.control(h, kernel = 'gaussian', B, w_est, p1, pctl)
+#  lplb.control(h, kernel = 'gaussian', B, w_est, p1, pctl)
 }
 
 \arguments{
@@ -26,10 +26,7 @@ Control is used in model fitting of lplb.
 This function checks the internal consisitency and returns a list of value as inputed to control model fit of lplb.
 }
 
-\author{Bingshu E. Chen and Siwei Zhang}
-\note{
-  Based on code from Siwei Zhang.
-}
+\author{Siwei Zhang and Bingshu E. Chen}
 
 \seealso{
 \code{\link{lplb}}
@@ -44,9 +41,7 @@ ctl = lplb.control(w_est=w_est, h=0.3, p1=2, B=100)
 
 ## then fit the following model
 
-fit = lplb(x, y, control = ctl)
-
-##
+#fit = lplb(x, y, control = ctl)
 }
 \keyword{ control }
 %\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
