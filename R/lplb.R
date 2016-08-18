@@ -10,10 +10,10 @@ library(MASS)
 
 lplb <- function(x, ...) UseMethod("lplb")
 
-lplb.default <- function(X, y, control, ...)
+lplb.default <- function(x, y, control, ...)
 {
   t0 = Sys.time()
-  X = as.matrix(X)
+  X = as.matrix(x)
   ## data needs to be ordered by time
   st = sort(y[, 1], index.return = TRUE)
   idx = st$ix
@@ -30,8 +30,8 @@ lplb.default <- function(X, y, control, ...)
   cat('Q1 = ', Q1, '\n')
   fit$mTstar = bstrp(X, y, control)
   B = control$B
-  pvalue = sum(fit$mTstar>=Q1)/B
-  cat('pvalue = ', pvalue, '\n')
+  pvalue = (sum(fit$mTstar>=Q1)+0.5)/(B+1)
+  cat('p-value = ', pvalue, '\n')
   t1 = Sys.time()
   runningtime=t1-t0
   fit$Q1 = Q1
@@ -47,7 +47,7 @@ lplb.default <- function(X, y, control, ...)
   return(fit)
 }
 
-lplb.control = function(h = 0.2, kernel = 'gaussian', B = 200, w_est = seq(0.05, 0.95, 0.025), p1 = 1, pctl = seq(0.2, 0.8, 0.1)) {
+lplb.control = function(h = 0.2, kernel = 'gaussian', B = 200, w0 = seq(0.05, 0.95, 0.025), p1 = 1, pctl = seq(0.2, 0.8, 0.1)) {
   if (!is.numeric(B) || B <= 0) 
     stop("value of 'B' must be > 0")
   if (!is.numeric(h) || h <= 0 || h >= 1) 
@@ -61,7 +61,7 @@ lplb.control = function(h = 0.2, kernel = 'gaussian', B = 200, w_est = seq(0.05,
     stop("value of 'pctl' must be in (0, 1)")
     
   
-  return(list(h = h, B = B, w_est = w_est, p1 = p1, pctl = pctl, kernel = kernel))
+  return(list(h = h, B = B, w_est = w0, p1 = p1, pctl = pctl, kernel = kernel))
 }
 
 lplb.formula <- function(formula, data=list(...), control = list(...), ...)
@@ -90,11 +90,6 @@ print.lplb <- function(x, ...)
   control = x$control
   c_names = as.character(rep(0,p1)) # to save col names
   w_q = quantile(x$w_est, probs = control$pctl, type=3)
-#   cat("\nCoefficients:\nquantile: 20%    40%    50%    60%    80%\nw_est:",w_q, '\n')
-#   for (i in 1:p1){
-#     cat(colnames(x$beta_w)[i],': ', x$beta_w[match(w_q,x$w_est) ,i],'\n')
-#   }
-  ## The code above can not align the texts
   
   opmtrx = matrix(0,p1*2, length(control$pctl))
   for (i in 1:p1){
@@ -105,11 +100,10 @@ print.lplb <- function(x, ...)
   }
   
   opmtrx = rbind(w_q, opmtrx)
-  rownames(opmtrx) = c('w_est',c_names)
+  rownames(opmtrx) = c('w0',c_names)
   cat("\nCoefficients(w_est quantile):\n")
   print(opmtrx)
   print(x$runningtime)
-  #cat('used time = ',  x$runningtime, '\n')
   cat('p1 =', p1, '; Bootstrap times =', x$B, '\n')
   cat('Kernel type:',x$kernel, '; Bandwidth (h) = ',x$h, '\n')
   cat('Statistic Q1 =', x$Q1, '; p_value =', x$pvalue, '\n')

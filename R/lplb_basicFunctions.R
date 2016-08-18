@@ -259,7 +259,7 @@ lple_fit = function(X, y, control) {
 bstrp = function(X, y, control){
   X = as.matrix(X)
   kernel = control$kernel
-  h = control$h
+  h  = control$h
   p1 = control$p1
   B  = control$B
   ## Fit model under H0
@@ -274,7 +274,7 @@ bstrp = function(X, y, control){
   ## build Martingale residuals
   resid_1 = rep(0, n)
   for (i in 1:n) {
-    wg = K_func(w, w[i],h, kernel) #do not use w_est here, but use w[i], length(w) = n
+    wg = K_func(w, w[i], h, kernel) #do not use w_est here, but use w[i], length(w) = n
     fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
     resid_1[i]<-residuals(fit, "martingale")[i]
   }
@@ -282,12 +282,14 @@ bstrp = function(X, y, control){
   # Bootstraping
   mTstar = rep(0, B)
   i = 1
-  cat('Bootstrap times count:')
+  cat('Bootstraping')
+  Bn = floor(B/10)      
   while (i <= B) {
     sample_index  = sample(n, size=n,replace=T)
     status_sample = status[sample_index]
     resid_sample  = status_sample - resid_1[sample_index]
     # status:n*1, resid_1:n*1
+
     resid_sample2 = resid_sample/exb
 
     time_order  = order(resid_sample2)
@@ -303,8 +305,10 @@ bstrp = function(X, y, control){
     # next halts the processing of the current iteration and advances the looping index.
     mTstar[i] = g$maxT
     #cat('i = ', i, mTstar[i], '\n') # for inspection
-    cat(' ', i, ',',sep = "") # for simplified inspection
+    #cat(' ', i, ',',sep = "") # for simplified inspection
+    if((i %% Bn)==0) cat('.')
     i = i + 1
   }
+  cat('DONE!\n')
   return(mTstar)
 }
