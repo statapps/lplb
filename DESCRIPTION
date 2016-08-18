@@ -1,10 +1,10 @@
 Package: lplb
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Local Partial Likelihood Bootstrap (LPLB) test
 Version: 0.1
-Date: 2016-07-22
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Date: 2016-07-29
+Authors@R: person("Siwei Zhang", "and Bingshu Chen", email = "bingshu.chen@queensu.ca", role = c("aut", "cre"))
 Depends: survival
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Description: Local Partial Likelihood Bootstrap (LPLB) is a set of tools to test multivariate covariates-biomatker interactions for survival data
+License: GPL-2
 LazyData: TRUE

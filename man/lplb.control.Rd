@@ -7,14 +7,14 @@ Auxiliary function for \code{\link{lplb}} fitting.
 Typically only used internally by 'lplb', but may be used to construct a control argument to either function. 
 }
 \usage{
-#  lplb.control(h, kernel = 'gaussian', B, w_est, p1, pctl)
+#   lplb.control(h, kernel = 'gaussian', B, w0, p1, pctl)
 }
 
 \arguments{
-  \item{h}{bandwidth of kernel function. The default value is 0.2}
+  \item{h}{bandwidth of kernel function. The default value is h = 0.2}
   \item{kernel}{kernel funtion types, including "gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "cosine", "optcosine". The default value is 'gaussian'}
   \item{B}{number of bootstrap times. The default value is 200}
-  \item{w_est}{the estimated points in the interval of (0,1), select arbitrarily. The default value is seq(0.05, 0.95, 0.025)}
+  \item{w0}{the estimated points in the interval of (0,1), select arbitrarily. The default value is seq(0.05, 0.95, 0.025)}
   \item{p1}{the number of dependend variables that make interactions with the biomarker w. The default value is 1}
   \item{pctl}{the estimated points that want to be shown in the output. The default value is seq(0.2, 0.8, 0.1)}
 }
@@ -32,12 +32,12 @@ This function checks the internal consisitency and returns a list of value as in
 \code{\link{lplb}}
 }
 \examples{
-## The default control values are: h = 0.2, kernel = 'gaussian', B = 200, w_est = seq(0.05, 0.95, 0.025), p1 = 1, pctl = seq(0.2, 0.8, 0.1) 
+## The default control values are: h = 0.2, kernel = 'gaussian', B = 200, w0 = seq(0.05, 0.95, 0.025), p1 = 1, pctl = seq(0.2, 0.8, 0.1) 
 ##
 ## To fit the lplb model with some control variables changed, 
 
-w_est=seq(0.03,0.97,by=2/100)
-ctl = lplb.control(w_est=w_est, h=0.3, p1=2, B=100)
+w0=seq(0.03,0.97,by=2/100)
+ctl = lplb.control(w0=w0, h=0.3, p1=2, B=100)
 
 ## then fit the following model
 
