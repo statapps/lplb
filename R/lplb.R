@@ -21,6 +21,7 @@ lplb.default <- function(x, y, control, ...)
   X = X[idx, ]
   ## transform w into interval (0,1)
   p=ncol(X)-1
+  w = X[, p+1]
   X[ ,p+1]=x.cdf(X[ ,p+1])
   X = as.matrix(X)
   
@@ -34,6 +35,7 @@ lplb.default <- function(x, y, control, ...)
   cat('p-value = ', pvalue, '\n')
   t1 = Sys.time()
   runningtime=t1-t0
+  fit$w = w
   fit$Q1 = Q1
   fit$B = B
   fit$pvalue = pvalue
