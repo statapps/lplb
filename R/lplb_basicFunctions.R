@@ -283,7 +283,7 @@ bstrp = function(X, y, control){
   mTstar = rep(0, B)
   i = 1
   cat('Bootstraping')
-  Bn = floor(B/10)      
+  Bn = floor(B/10) + 1     
   while (i <= B) {
     sample_index  = sample(n, size=n,replace=T)
     status_sample = status[sample_index]

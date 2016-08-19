@@ -112,11 +112,14 @@ print.lplb <- function(x, ...)
 }
 
 ## plot function.
-## !!! input must be ordered by w_est!!!!!!!!!
-plot.lplb = function(x, ...) {
-  w  = x$w_est
-  bw = x$beta_w # only the coefs of the interaction terms
+plot.lplb = function(x, scale = c('original', 'transformed'), ...) {
+  scale = match.arg(scale)
+  bw = x$beta_w
   p1 = ncol(bw)
+  control = x$control
+  w_q = quantile(x$w, probs = x$w_est)
+  w = switch(scale, original = w_q, transformed = x$w_est)
+
   if(p1 == 1) {
     par(mfrow = c(1, 1))
     plot(w, bw, xlab = 'w', ylab = 'beta(w)', main = 'x1', type = 'l')
