@@ -288,12 +288,12 @@ bstrp = function(X, y, control){
     sample_index  = sample(n, size=n,replace=T)
     status_sample = status[sample_index]
     resid_sample  = status_sample - resid_1[sample_index]
-    # status:n*1, resid_1:n*1
+    
+    # create new survival time T_star using lambda_star
+    lambda_star = resid_sample/exb
 
-    resid_sample2 = resid_sample/exb
-
-    time_order  = order(resid_sample2)
-
+    # sort dataset by lambda_star
+    time_order  = order(lambda_star)
     status_star = status_sample[time_order]
     X_star      = X[time_order, ]
     time_star   = 1:n
