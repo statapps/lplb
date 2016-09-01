@@ -116,13 +116,14 @@ plot.lplb = function(x, scale = c('original', 'transformed'), ...) {
   scale = match.arg(scale)
   bw = x$beta_w
   p1 = ncol(bw)
+  bw_names = colnames(bw) # keep the col names
   control = x$control
   w_q = quantile(x$w, probs = x$w_est)
   w = switch(scale, original = w_q, transformed = x$w_est)
 
   if(p1 == 1) {
     par(mfrow = c(1, 1))
-    plot(w, bw, xlab = 'w', ylab = 'beta(w)', main = 'x1', type = 'l')
+    plot(w, bw, xlab = 'w', ylab = 'beta(w)', main = bw_names[1], type = 'l')
   } else if (p1 == 2) {
     par(mfrow = c(1, 2))
   } else if ((p1 <= 4) & (p1 > 2)) {
@@ -134,7 +135,6 @@ plot.lplb = function(x, scale = c('original', 'transformed'), ...) {
     par(mfrow = c(p2, p2))
   }
   if(p1 > 1) {
-    bw_names = colnames(bw) # keep the col names
     for (i in 1:p1) {
       plot(w, bw[, i], xlab = 'w', ylab = 'beta(w)', main = bw_names[i], type = 'l')
     }
