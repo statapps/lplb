@@ -10,8 +10,7 @@ library(MASS)
 
 lplb <- function(x, ...) UseMethod("lplb")
 
-lplb.default <- function(x, y, control, ...)
-{
+lplb.default <- function(x, y, control, ...){
   t0 = Sys.time()
   X = as.matrix(x)
   ## data needs to be ordered by time
@@ -66,8 +65,7 @@ lplb.control = function(h = 0.2, kernel = 'gaussian', B = 200, w0 = seq(0.05, 0.
   return(list(h = h, B = B, w_est = w0, p1 = p1, pctl = pctl, kernel = kernel))
 }
 
-lplb.formula <- function(formula, data=list(...), control = list(...), ...)
-{
+lplb.formula <- function(formula, data=list(...), control = list(...), ...){
   mf <- model.frame(formula=formula, data=data)
   x <- model.matrix(attr(mf, "terms"), data=mf)
   
@@ -84,8 +82,7 @@ lplb.formula <- function(formula, data=list(...), control = list(...), ...)
   return(fit)
 }
 
-print.lplb <- function(x, ...)
-{
+print.lplb <- function(x, ...){
   cat("Call:\n")
   print(x$call)
   p1 = ncol(x$beta_w)
@@ -140,4 +137,3 @@ plot.lplb = function(x, scale = c('original', 'transformed'), ...) {
     }
   }
 }
-
