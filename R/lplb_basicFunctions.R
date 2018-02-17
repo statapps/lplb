@@ -16,7 +16,7 @@ K_func<-function(w, u, h, kernel = c("gaussian", "epanechnikov", "rectangular", 
   ax = abs(x)
   esp = 1e-40
 
-  kh = switch(kernel, gaussian = dnorm(x, sd = h), # I would set the default for guassian
+  kh = switch(kernel, gaussian = dnorm(x, sd = h/2), # I would set the default for guassian
          rectangular = ifelse(ax < h, 0.5/h, esp), 
          triangular = ifelse(ax < h, (1 - ax/h)/h, esp),
          epanechnikov = ifelse(ax < h, 3/4 * (1 - (ax/h)^2)/h, esp), ## This was the kernel that we used before
