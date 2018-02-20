@@ -23,8 +23,6 @@ lple.default <- function(x, y, control, ...){
   fit$B = B
   fit$control = control
   fit$call <- match.call()
-  #fit$kernel = control$kernel
-  #fit$h = control$h
   class(fit) <- "lple"
   
   return(fit)
@@ -52,7 +50,9 @@ print.lple <- function(x, ...){
   print(x$call)
   p1 = ncol(x$beta_w)
 
-  print(cbind(w = x$w_est, beta_w = x$beta_w))
+  out = cbind(x$w_est, x$beta_w, sd)
+  colnames(out) = c('w', 'beta(w)', 'sd')
+  print(out)
   cat('Kernel type:',x$kernel, '; Bandwidth (h) = ',x$h, '\n')
 }
 

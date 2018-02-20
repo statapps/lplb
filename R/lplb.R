@@ -40,8 +40,6 @@ lplb.default <- function(x, y, control, ...){
   fit$pvalue = pvalue
   fit$control = control
   fit$call <- match.call()
-  #fit$kernel = control$kernel
-  #fit$h = control$h
   fit$runningtime = runningtime
   class(fit) <- "lplb"
   
