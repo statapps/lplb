@@ -23,8 +23,8 @@ lple.default <- function(x, y, control, ...){
   fit$B = B
   fit$control = control
   fit$call <- match.call()
-  fit$kernel = control$kernel
-  fit$h = control$h
+  #fit$kernel = control$kernel
+  #fit$h = control$h
   class(fit) <- "lple"
   
   return(fit)
@@ -51,24 +51,8 @@ print.lple <- function(x, ...){
   cat("Call:\n")
   print(x$call)
   p1 = ncol(x$beta_w)
-  control = x$control
-  c_names = as.character(rep(0,p1)) # to save col names
-  w_q = quantile(x$w_est, probs = control$pctl, type=3)
-  
-  opmtrx = matrix(0,p1*2, length(control$pctl))
-  for (i in 1:p1){
-    opmtrx[(i*2-1), ] = x$beta_w[match(w_q,x$w_est) ,i]
-    c_names[(i*2-1)] = colnames(x$beta_w)[i]
-    opmtrx[(i*2), ] = x$sd[match(w_q,x$w_est) ,i]
-    c_names[(i*2)] = paste0(colnames(x$beta_w)[i],'(sd)')
-  }
-  
-  opmtrx = rbind(w_q, opmtrx)
-  rownames(opmtrx) = c('w0',c_names)
-  cat("\nCoefficients(w_est quantile):\n")
-  print(opmtrx)
-  print(x$runningtime)
-  cat('p1 =', p1, '; Bootstrap times =', x$B, '\n')
+
+  print(cbind(w = x$w_est, beta_w = x$beta_w))
   cat('Kernel type:',x$kernel, '; Bandwidth (h) = ',x$h, '\n')
 }
 
