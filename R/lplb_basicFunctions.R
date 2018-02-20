@@ -251,9 +251,8 @@ lple_fit = function(X, y, control) {
   maxT = maxreturn$maxQ1
   sd = maxreturn$sd.err
   colnames(beta_w) = x_names[1:p1]
-  fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = maxT, sd=sd)
-  fit$kernel = kernel
-  fit$h = h
+  fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = maxT, 
+	     sd=sd, h = h, X = X, y = y, kernel = kernel)
   class(fit)= "lple"
   return(fit)
 }

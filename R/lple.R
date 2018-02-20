@@ -50,7 +50,7 @@ print.lple <- function(x, ...){
   print(x$call)
   p1 = ncol(x$beta_w)
 
-  out = cbind(x$w_est, x$beta_w, sd)
+  out = cbind(x$w_est, x$beta_w, x$sd)
   colnames(out) = c('w', 'beta(w)', 'sd')
   print(out)
   cat('Kernel type:',x$kernel, '; Bandwidth (h) = ',x$h, '\n')
@@ -86,19 +86,35 @@ plot.lple = function(x, scale = c('original', 'transformed'), ...) {
   }
 }
 
-predict.lple = function(object, newdata, type = c("lp", "risk")) {
+predict.lple = function(object, newdata, newy = NULL) {
   beta = object$beta_w
-  type = match.arg(type)
-  if(missing(newdata)){
-    cat('newdata is missing, return beta_w\n')
-    return(beta)
-    #X = model.matrix(object)
-  }
-  
-  X = newdata
+  w    = object$w_est
+
+  if(missing(newdata))
+    X = object$X
+  else
+    X = newdata
+
   p = ncol(X)
+  nw = X[, p]
   Z = as.matrix(X[, -p])
-  xb  = rowSums(Z*beta)
-  pred = switch(type, lp = xb, risk = exp(xb))
+
+  ### approximation beta(w) for w where beta is not estimated
+  appxf = function(y, x, xout){ yn=approx(x,y,xout=xout,rule=2)$y}
+  bz = apply(beta, 2, appxf, x=w, xout = nw)
+ 
+  xb  = rowSums(Z*bz)
+  pred = list(lp = xb, risk = exp(xb))
+
+  if(!is.null(newy)) {
+    ## Prediction error for survival data is dfined as -log(Lik) of new data
+    status = y[, 2] #y[ ,1] is time; y[ ,2]is status
+    if(length(status) != n) 
+      stop("Error: new y shall have the same subjects as the new data")
+
+    xb  = predict(fit, X)    #(n*1)
+    exb = as.vector(exp(xb))
+    pred$pe = -sum(status*(xb - log(cumsum(exb))))
+  }
   return(pred)
 }
