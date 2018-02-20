@@ -104,7 +104,8 @@ predict.lple = function(object, newdata, newy = NULL) {
   bz = apply(beta, 2, appxf, x=w, xout = nw)
  
   xb  = rowSums(Z*bz)
-  pred = list(lp = xb, risk = exp(xb))
+  exb = exp(xb)
+  pred = list(lp = xb, risk = exb)
 
   if(!is.null(newy)) {
     ## Prediction error for survival data is dfined as -log(Lik) of new data
@@ -112,8 +113,7 @@ predict.lple = function(object, newdata, newy = NULL) {
     if(length(status) != n) 
       stop("Error: new y shall have the same subjects as the new data")
 
-    xb  = predict(fit, X)    #(n*1)
-    exb = as.vector(exp(xb))
+    exb = (exp(xb))
     pred$pe = -sum(status*(xb - log(cumsum(exb))))
   }
   return(pred)
