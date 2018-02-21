@@ -1,6 +1,8 @@
 \name{lplb}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \alias{lplb}
+\alias{lple_fit}
+\alias{bstrp}
 \alias{lplb.default}
 \alias{lplb.formula}
 
@@ -40,7 +42,8 @@ If not found in data, the variables are taken from environment(formula).}
 
   \item{control}{a list of parameters for controlling the fitting process. See 'lplb.control' for details}
 
-  \item{\dots}{additional arguments to be passed to the low level regression fitting functions (see below).} %- do we need this??????????
+  \item{\dots}{additional arguments to be passed to the low level regression fitting functions (see below).} 
+%- do we need this??????????
 }
 \details{
 Here 'w' is a Biomarker variable. This variable is required and shall be the last dependent variable in the formula.

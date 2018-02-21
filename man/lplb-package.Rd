@@ -42,11 +42,13 @@ and biomarker interactions for survival data based on local partial likelihood. 
 2. Liu, Y., Jiang, W. and Chen, B. E. (2015). Testing for treatment-biomarker interaction based on local partial-likelihood. Statistics in Medicine. 34, 3516-3530.
 }
 \keyword{lplb}
+\keyword{biomarker}
+\keyword{local linear model}
 \seealso{
 \code{coxph, }
 \code{bhm, }
 \code{survival}
 }
 \examples{
-# fit = lplb(y~biomarker+treatment)
+# fit = lplb(y~trt+age+biomarker)
 } 
