@@ -109,7 +109,7 @@ predict.lple = function(object, newdata, newy = NULL) {
 
   if(!is.null(newy)) {
     ## Prediction error for survival data is dfined as -log(Lik) of new data
-    status = y[, 2] #y[ ,1] is time; y[ ,2]is status
+    status = newy[, 2]                #newy[ ,1] is time; newy[ ,2]is status
     if(length(status) != n) 
       stop("Error: new y shall have the same subjects as the new data")
 
