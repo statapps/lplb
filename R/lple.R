@@ -96,6 +96,7 @@ predict.lple = function(object, newdata, newy = NULL) {
     X = newdata
 
   p = ncol(X)
+  n = nrow(X)
   nw = X[, p]
   Z = as.matrix(X[, -p])
 
