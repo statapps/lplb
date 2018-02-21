@@ -95,7 +95,6 @@ print.lplb <- function(x, ...){
     opmtrx[(i*2), ] = x$sd[match(w_q,x$w_est) ,i]
     c_names[(i*2)] = paste0(colnames(x$beta_w)[i],'(sd)')
   }
-  
   opmtrx = rbind(w_q, opmtrx)
   rownames(opmtrx) = c('w0',c_names)
   cat("\nCoefficients(w_est quantile):\n")
@@ -104,34 +103,4 @@ print.lplb <- function(x, ...){
   cat('p1 =', p1, '; Bootstrap times =', x$B, '\n')
   cat('Kernel type:',x$kernel, '; Bandwidth (h) = ',x$h, '\n')
   cat('Statistic Q1 =', x$Q1, '; p_value =', x$pvalue, '\n')
-}
-
-## plot function.
-plot.lplb = function(x, scale = c('original', 'transformed'), ...) {
-  scale = match.arg(scale)
-  bw = x$beta_w
-  p1 = ncol(bw)
-  bw_names = colnames(bw) # keep the col names
-  control = x$control
-  w_q = quantile(x$w, probs = x$w_est)
-  w = switch(scale, original = w_q, transformed = x$w_est)
-
-  if(p1 == 1) {
-    par(mfrow = c(1, 1))
-    plot(w, bw, xlab = 'w', ylab = 'beta(w)', main = bw_names[1], type = 'l')
-  } else if (p1 == 2) {
-    par(mfrow = c(1, 2))
-  } else if ((p1 <= 4) & (p1 > 2)) {
-    par(mfrow = c(2, 2))
-  } else if ((p1 <= 6) & (p1 > 4)) {
-    par(mfrow = c(2, 3))
-  } else {
-    p2 = ceiling(sqrt(p1))
-    par(mfrow = c(p2, p2))
-  }
-  if(p1 > 1) {
-    for (i in 1:p1) {
-      plot(w, bw[, i], xlab = 'w', ylab = 'beta(w)', main = bw_names[i], type = 'l')
-    }
-  }
 }

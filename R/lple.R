@@ -57,7 +57,7 @@ print.lple <- function(x, ...){
 }
 
 ## plot function.
-plot.lple = function(x, scale = c('original', 'transformed'), ...) {
+plot.lple = function(x, ..., scale = c('original', 'transformed')) {
   scale = match.arg(scale)
   bw = x$beta_w
   p1 = ncol(bw)
@@ -68,7 +68,7 @@ plot.lple = function(x, scale = c('original', 'transformed'), ...) {
 
   if(p1 == 1) {
     par(mfrow = c(1, 1))
-    plot(w, bw, xlab = 'w', ylab = 'beta(w)', main = bw_names[1], type = 'l')
+    plot(w, bw, ..., xlab = 'w', ylab = 'beta(w)', main = bw_names[1], type = 'l')
   } else if (p1 == 2) {
     par(mfrow = c(1, 2))
   } else if ((p1 <= 4) & (p1 > 2)) {
@@ -81,7 +81,7 @@ plot.lple = function(x, scale = c('original', 'transformed'), ...) {
   }
   if(p1 > 1) {
     for (i in 1:p1) {
-      plot(w, bw[, i], xlab = 'w', ylab = 'beta(w)', main = bw_names[i], type = 'l')
+      plot(w, bw[, i], ..., xlab = 'w', ylab = 'beta(w)', main = bw_names[i], type = 'l')
     }
   }
 }
