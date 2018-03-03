@@ -103,19 +103,19 @@ predict.lple = function(object, newdata, newy = NULL) {
   ### approximation beta(w) for w where beta is not estimated
   appxf = function(y, x, xout){ yn=approx(x,y,xout=xout,rule=2)$y}
   bz = apply(beta, 2, appxf, x=w, xout = nw)
- 
   xb  = rowSums(Z*bz)
   exb = exp(xb)
   pred = list(lp = xb, risk = exb)
 
   if(!is.null(newy)) {
-    if(length(status) != n)
+    if(length(newy[, 1]) != n)
       stop("Error: new y shall have the same subjects as the new data")
-    ## sort surviva time for new y
-    st = sort(newy[, 1], index.return = TRUE)
-    idx = st$ix
-    eb   = xb[idx]
-    exb  = exb[idx]
+
+    ## sort survival time for new y
+    idx = order(newy[, 1], decreasing=TRUE)
+    xb  = xb[idx]
+    exb = exb[idx]
+
     ## Prediction error for survival data is dfined as -log(Lik) of new data
     status = newy[idx, 2]             #newy[ ,1] is time; newy[ ,2]is status
     pred$pe = -sum(status*(xb - log(cumsum(exb))))

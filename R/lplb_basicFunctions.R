@@ -254,6 +254,7 @@ lple_fit = function(X, y, control) {
   fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = maxT, 
 	     sd=sd, h = h, X = X, y = y, kernel = kernel)
   class(fit)= "lple"
+  fit$call = match.call()
   return(fit)
 }
 
