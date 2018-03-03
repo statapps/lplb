@@ -109,12 +109,15 @@ predict.lple = function(object, newdata, newy = NULL) {
   pred = list(lp = xb, risk = exb)
 
   if(!is.null(newy)) {
-    ## Prediction error for survival data is dfined as -log(Lik) of new data
-    status = newy[, 2]                #newy[ ,1] is time; newy[ ,2]is status
-    if(length(status) != n) 
+    if(length(status) != n)
       stop("Error: new y shall have the same subjects as the new data")
-
-    exb = (exp(xb))
+    ## sort surviva time for new y
+    st = sort(newy[, 1], index.return = TRUE)
+    idx = st$ix
+    eb   = xb[idx]
+    exb  = exb[idx]
+    ## Prediction error for survival data is dfined as -log(Lik) of new data
+    status = newy[idx, 2]             #newy[ ,1] is time; newy[ ,2]is status
     pred$pe = -sum(status*(xb - log(cumsum(exb))))
   }
   return(pred)
