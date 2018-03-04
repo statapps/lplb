@@ -16,7 +16,7 @@ K_func<-function(w, u, h, kernel = c("gaussian", "epanechnikov", "rectangular", 
   ax = abs(x)
   esp = 1e-40
 
-  kh = switch(kernel, gaussian = dnorm(x, sd = h/2), # I would set the default for guassian
+  kh = switch(kernel, gaussian = ifelse(ax < 5*h, dnorm(x, sd = h/2), esp), # I would set the default for guassian
          rectangular = ifelse(ax < h, 0.5/h, esp), 
          triangular = ifelse(ax < h, (1 - ax/h)/h, esp),
          epanechnikov = ifelse(ax < h, 3/4 * (1 - (ax/h)^2)/h, esp), ## This was the kernel that we used before
@@ -143,7 +143,6 @@ Sk2f = function(X, y, control, bw0, w0, GSt1) {
   Sf2 = apply(Z2ezb_fai, c(1, 2), function(x, y){return(y%*%x)}, Sm)
   Sf1_2 = aperm(array(apply(Sf1,1,function(x){return(x%*%t(x))}),c(p_fai,p_fai,n)),c(3,1,2))
   I_fai = colSums(status*(kh*(Sf2/c(Sf0)-Sf1_2/c(Sf0)^2)), dims = 1)
-
   ## calculate pi_cov
   # Note: TSf1 = t(Tx)-Sf1/c(Sf0) # (n*p_fai)
   # Note: GSt1 = t(Gx)-St1/c(St0) # (n*p_th)
@@ -204,14 +203,13 @@ maxTest = function(X,y,control,theta, betaw){
     ## save diag(gamma11) to calculate sd.err of beta_w
     sd.err[i, ] = sqrt(diag(gamma11))
 
-    var_hat = sigma11 + gamma11 - 2*omiga11
-
     ## calculate Q1 at w0=w_est[i]
+    var_hat = sigma11 + gamma11 - 2*omiga11
     diff_hat = diff_est[i, ] # class: numeric
     Q1[i] = as.numeric( t(diff_hat) %*% solve(var_hat) %*% as.matrix(diff_hat))
   }
   maxQ1 = max(abs(Q1))
-  return(list(maxQ1=maxQ1,sd.err=sd.err))
+  return(list(maxQ1=maxQ1, sd.err=sd.err))
 }
 
 ### 04. estimate beta(w) (Under H1) and theta (Under H0)

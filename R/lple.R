@@ -89,12 +89,16 @@ plot.lple = function(x, ..., scale = c('original', 'transformed')) {
 predict.lple = function(object, newdata, newy = NULL) {
   beta = object$beta_w
   w    = object$w_est
+  sfit = survfit(object)
 
-  if(missing(newdata))
+  if(missing(newdata)) {
     X = object$X
-  else
+    residuals = sfit$residuals
+  }
+  else {
     X = newdata
-
+    residuals = NULL
+  }
   p = ncol(X)
   n = nrow(X)
   nw = X[, p]
@@ -105,7 +109,7 @@ predict.lple = function(object, newdata, newy = NULL) {
   bz = apply(beta, 2, appxf, x=w, xout = nw)
   xb  = rowSums(Z*bz)
   exb = exp(xb)
-  pred = list(lp = xb, risk = exb)
+  result = list(lp = xb, risk = exb)
 
   if(!is.null(newy)) {
     if(length(newy[, 1]) != n)
@@ -115,10 +119,57 @@ predict.lple = function(object, newdata, newy = NULL) {
     idx = order(newy[, 1], decreasing=TRUE)
     xb  = xb[idx]
     exb = exb[idx]
+    newy = newy[idx, ]
 
     ## Prediction error for survival data is dfined as -log(Lik) of new data
-    status = newy[idx, 2]             #newy[ ,1] is time; newy[ ,2]is status
-    pred$pe = -sum(status*(xb - log(cumsum(exb))))
+    time   = newy[, 1]
+    status = newy[, 2]             #newy[ ,1] is time; newy[ ,2]is status
+    result$pe = -sum(status*(xb - log(cumsum(exb))))
+
+    #### prediction error based on martingle residual, may not work as good
+    chz = appxf(sfit$cumhaz, x=sfit$time, xout=time)
+    residuals = (status - chz*exb)
   }
-  return(pred)
+  result$residuals = residuals
+  return(result)
+}
+
+survfit.lple = function(object, se.fit=FALSE) {
+  if(se.fit) {
+    stop("S.E. for lple survfit is not done yet!")
+  }
+  beta = object$beta_w
+  w    = object$w_est
+  y    = object$y
+  ### sort data by time
+  idx  = order(y[, 1])
+  X    = object$X[idx, ]
+  y    = y[idx, ]
+
+  p = ncol(X)
+  n = nrow(X)
+  nw = X[, p]
+  Z = as.matrix(X[, -p])
+  n.event = y[, 2]
+  time   = y[, 1]
+  events = sum(n.event)
+  n.risk = n:1
+
+  ### approximation beta(w) for w where beta is not estimated
+  appxf = function(y, x, xout){ yn=approx(x,y,xout=xout,rule=2)$y}
+  bz = apply(beta, 2, appxf, x=w, xout = nw)
+  bz = 0.3056894
+  exb = exp(rowSums(Z*bz))
+  xb1 = exb[n:1]
+  rxb = cumsum(xb1)[n:1] #risk set 
+  cumhaz = cumsum(1/rxb*n.event)
+  surv   = exp(-cumhaz)
+  residuals = n.event - cumhaz*exb
+  ### code above has been validated for cumhaz and surv function
+  result = list(n = n, events = events, time = time, cumhaz = cumhaz, 
+		surv = surv, n.event = n.event, n.risk = n.risk,
+		residuals = residuals)
+  class(result) = c('survfit.cox', 'survfit')
+  return(result)
+  ### see also basehaz()
 }
