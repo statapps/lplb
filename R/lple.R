@@ -89,7 +89,7 @@ plot.lple = function(x, ..., scale = c('original', 'transformed')) {
 predict.lple = function(object, newdata, newy = NULL) {
   beta = object$beta_w
   w    = object$w_est
-  sfit = survfit(object)
+  sfit = survfit(object, se.fit=FALSE)
 
   if(missing(newdata)) {
     X = object$X
@@ -105,8 +105,7 @@ predict.lple = function(object, newdata, newy = NULL) {
   Z = as.matrix(X[, -p])
 
   ### approximation beta(w) for w where beta is not estimated
-  appxf = function(y, x, xout){ yn=approx(x,y,xout=xout,rule=2)$y}
-  bz = apply(beta, 2, appxf, x=w, xout = nw)
+  bz = apply(beta, 2, .appxf, x=w, xout = nw)
   xb  = rowSums(Z*bz)
   exb = exp(xb)
   result = list(lp = xb, risk = exb)
@@ -127,20 +126,20 @@ predict.lple = function(object, newdata, newy = NULL) {
     result$pe = -sum(status*(xb - log(cumsum(exb))))
 
     #### prediction error based on martingle residual, may not work as good
-    chz = appxf(sfit$cumhaz, x=sfit$time, xout=time)
+    chz = .appxf(sfit$cumhaz, x=sfit$time, xout=time)
     residuals = (status - chz*exb)
+    result$pe.mres = sum(residuals^2)
   }
   result$residuals = residuals
   return(result)
 }
 
-survfit.lple = function(object, se.fit=FALSE) {
-  if(se.fit) {
-    stop("S.E. for lple survfit is not done yet!")
-  }
+### baseline cumulative hazard function and martingale residuals for LPLE
+survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
   beta = object$beta_w
   w    = object$w_est
   y    = object$y
+
   ### sort data by time
   idx  = order(y[, 1])
   X    = object$X[idx, ]
@@ -150,26 +149,49 @@ survfit.lple = function(object, se.fit=FALSE) {
   n = nrow(X)
   nw = X[, p]
   Z = as.matrix(X[, -p])
-  n.event = y[, 2]
+  nevent = y[, 2]
   time   = y[, 1]
-  events = sum(n.event)
+  events = sum(nevent)
   n.risk = n:1
 
   ### approximation beta(w) for w where beta is not estimated
-  appxf = function(y, x, xout){ yn=approx(x,y,xout=xout,rule=2)$y}
-  bz = apply(beta, 2, appxf, x=w, xout = nw)
-  bz = 0.3056894
+  bz = apply(beta, 2, .appxf, x=w, xout = nw)
   exb = exp(rowSums(Z*bz))
-  xb1 = exb[n:1]
-  rxb = cumsum(xb1)[n:1] #risk set 
-  cumhaz = cumsum(1/rxb*n.event)
-  surv   = exp(-cumhaz)
-  residuals = n.event - cumhaz*exb
+  rcumsum <- function(x) rev(cumsum(rev(x))) # sum from last to first
+  rxb = rcumsum(exb)         #sum over risk set 
+  haz = nevent/rxb           #hazard function
+  varhaz = nevent/rxb^2      #var for haz
+  cumhaz = cumsum(haz)       #Breslow estimate of cumulative hazard
+  surv   = exp(-cumhaz)      #survival function S(t)
+  residuals = nevent - cumhaz*exb # Martingale residuals
   ### code above has been validated for cumhaz and surv function
+
   result = list(n = n, events = events, time = time, cumhaz = cumhaz, 
-		surv = surv, n.event = n.event, n.risk = n.risk,
-		residuals = residuals)
+		hazard=haz, surv=surv, n.event = nevent, n.risk = n.risk,
+		varhaz=varhaz, residuals = residuals)
+
+  if(se.fit) {
+    zval = qnorm(1- (1-conf.int)/2, 0,1)
+    varh = cumsum(varhaz)
+    std.err = sqrt(varh)
+    xx   = ifelse(surv==0,1,result$surv)  #avoid some "log(0)" messages
+    tmp1 = ifelse(surv==0, 0, exp(log(xx) + zval*std.err))
+    tmp2 = ifelse(surv==0, 0, exp(log(xx) - zval*std.err))
+    result = c(result, list(upper = pmin(tmp1, 1), lower = tmp2, 
+               std.err=std.err, conf.type='log', conf.int=conf.int))
+  }
   class(result) = c('survfit.cox', 'survfit')
   return(result)
   ### see also basehaz()
+}
+
+### Residuals of LPLE 
+residuals.lple = function(object, type=c("martingale", "deviance")) {
+  type = match.arg(type)
+  sfit = survfit(object, se.fit = FALSE)
+  rr = sfit$residuals
+  status = sfit$n.event
+  drr = sign(rr)*sqrt(-2*(rr+ifelse(status==0, 0, status*log(status-rr))))
+  resid = switch(type, martingale = rr, deviance = drr)
+  return(resid)
 }

@@ -56,6 +56,9 @@ interaction_X_w0=function(X, p1, w0){
   return(X2)
 }
 
+### Approximate function
+.appxf = function(y, x, xout){ approx(x,y,xout=xout,rule=2)$y }
+
 ### 02. Calculate S(k)_theta and S(k)_fai
 # Since St0 to St2 do not change w0, so do I_theta and pi_theta, we can separate Sk2 into two parts: Sk2t and Sk2f
 # including the calculation of I and pi
