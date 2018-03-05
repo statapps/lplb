@@ -7,7 +7,7 @@ The Plot Function of lple
 \description{
 Draw a series of plots of beta_w vs. w_est for each dependent variable with interactions with the biomarker w. See also:
 \code{\link{lple}},
-\code{\link{lple.control}}
+\code{\link{lplb.control}}
 }
 \usage{
 \method{plot}{lple}(x, ..., scale = c('original', 'transformed'))
@@ -21,7 +21,7 @@ Draw a series of plots of beta_w vs. w_est for each dependent variable with inte
 \details{
 plot.lple is called to plot the relationships between beta_w and w_est for each dependent variable with interactions with the biomarker w, from the \code{\link{lple}} fit model.
 
-The number of interaction terms can be set in \code{\link{lple.control}}.
+The number of interaction terms can be set in \code{\link{lplb.control}}.
 
 The default method, print.default has its own help page. Use methods("print") to get all the methods for the print generic.
 }
@@ -30,7 +30,7 @@ The default method, print.default has its own help page. Use methods("print") to
 
 \seealso{
 \code{\link{lple}},
-\code{\link{lple.control}},
+\code{\link{lplb.control}},
 \code{\link{print.lple}}
 }
 \examples{

@@ -20,7 +20,7 @@ Local partial likelihood estimate (LPLE) method to fit biomarker Models
 #
 # to fit a model with interactions between biomarker (w) with the first p1
 # terms of dependent variables. 
-# p1 is included in 'control'. p1<p. See 'lple.control' for details
+# p1 is included in 'control'. p1<p. See 'lplb.control' for details
 #
 # use
 #         lple(x, y, control)
