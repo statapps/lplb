@@ -13,7 +13,7 @@ lple_cvpe = function(X, y, control, K = 5) {
   pe = 0
   risk = X[, 1]       # to be used in cIndex
 
-  for(i in 1:m) {
+  for(i in 1:K) {
     Xi = X[Dk != i, ]
     yi = y[Dk != i, ]
 	        
