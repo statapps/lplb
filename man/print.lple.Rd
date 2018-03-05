@@ -12,7 +12,7 @@ print are used to provide a short summary of lple outputs.
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{a lple class returned from lple fit}
+  \item{x}{the results of a lple fit}
   \item{\dots}{other options used in print()}
 }
 \details{
