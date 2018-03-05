@@ -234,11 +234,19 @@ lple_fit = function(X, y, control) {
   theta=fitH0$coef
 
   ## estimate beta(w)
-  ## set matrix "betaw" to save the coef of Z1 to Zp, interaction terms (zi with (w-w0)) and (w-w0) in every row, each row for a different w0. dim: (m* (p+p1+1))
+  ## set matrix "betaw" to save the coef of Z1 to Zp, 
+  ## interaction terms (zi with (w-w0)) and (w-w0) in every row, 
+  ## each row for a different w0. dim: (m* (p+p1+1))
   betaw = matrix(0, nrow=m, ncol=p+p1+1)
-  ## set matrix "beta_w" to save only the z1 to zp1, by which we can plot the relationship of beta(w) vs. w_est. dim: (m*p1)
+  ## set matrix "beta_w" to save only the Z1 to Zp1, 
+  ## by which we can plot the relationship of beta(w) vs. w_est. dim: (m*p1)
   beta_w = matrix(0, m, p1)
 
+  ## Check if the data is sorted by time
+  j = sample(1:n, 2)
+  tm = y[j, 1]
+  if((j[1]-j[2])*(tm[1]-tm[2])<0) 
+    stop("Survival time shall be sorted! Check your program or use lple() directly")
   for (i in 1:m) {
     wg = K_func(X_fai[ ,p+p1+1], w_est[i],h, kernel)
     fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
