@@ -81,8 +81,8 @@ This package was build on code developed by Yicong Liu for simple treatment-biom
 \code{\link{bhm}},
 \code{\link{coxph}},
 \code{\link{lplb.control}}
-\code{\link{print.lplb}}
-\code{\link{plot.lplb}}
+\code{\link{print.lple}}
+\code{\link{plot.lple}}
 }
 \examples{
 ## fit1 = lplb(Surv(time, status)~z1 + z2 + w, data = dat, B = B, p1 = 2)
