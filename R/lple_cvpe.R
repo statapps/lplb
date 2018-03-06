@@ -1,5 +1,5 @@
 ### prediction error using crossvalidation
-lple_cvpe = function(X, y, control, K = 5, Dk = NULL) {
+lple_cvpe = function(X, y, control, K = 5, Dk = NULL, faster = FALSE) {
   risk = X[, 1]       # to be used in cIndex
 
   # sort data by survival time
@@ -11,11 +11,14 @@ lple_cvpe = function(X, y, control, K = 5, Dk = NULL) {
   if(is.null(Dk)) Dk = sample(c(1:K), n, replace = TRUE)
   else K = max(Dk)
 
+  if (faster) m = 1
+  else m = K 
+
   ctl = control
   pe = 0
   risk = X[, 1]       # to be used in cIndex
 
-  for(i in 1:K) {
+  for(i in 1:m) {
     Xi = X[Dk != i, ]
     yi = y[Dk != i, ]
 	        
@@ -29,12 +32,13 @@ lple_cvpe = function(X, y, control, K = 5, Dk = NULL) {
     risk[Dk == i] = prd$risk
     pe = pe + prd$pe
   }
+  if(faster) pe = pe * K
   # Cross-validation C-index
   cidx = survConcordance(y~risk)$concordance
   return(list(pe=pe, cIndex = cidx))
 }
 
-lple_hSelect = function(X, y, control, step = 0.05, K = 5){
+lple_hSelect = function(X, y, control, step = 0.05, K = 10, faster = FALSE){
   h = seq(0.05, 0.95, step)
   pe = h
   n = length(y[, 1])
