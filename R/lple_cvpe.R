@@ -46,7 +46,7 @@ lple_hSelect = function(X, y, control, step = 0.05, K = 10, faster = FALSE){
 
   for (i in 1:length(h)) {
     control$h = h[i]
-    pe[i] = lple_cvpe(X, y, control, Dk = Dk)$pe
+    pe[i] = lple_cvpe(X, y, control, Dk = Dk, faster=faster)$pe
     cat('h = ', h[i], 'CV Prediction Error =', pe[i], '\n')
   }
   h_opt = h[order(pe)]
