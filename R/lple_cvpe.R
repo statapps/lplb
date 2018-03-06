@@ -1,5 +1,5 @@
 ### prediction error using crossvalidation
-lple_cvpe = function(X, y, control, K = 5) {
+lple_cvpe = function(X, y, control, K = 5, Dk = NULL) {
   risk = X[, 1]       # to be used in cIndex
 
   # sort data by survival time
@@ -8,7 +8,7 @@ lple_cvpe = function(X, y, control, K = 5) {
   X = X[idx, ]
   n = length(X[, 1])
 
-  Dk = sample(c(1:K), n, replace = TRUE)
+  if(is.null(Dk)) Dk = sample(c(1:K), n, replace = TRUE)
   ctl = control
   pe = 0
   risk = X[, 1]       # to be used in cIndex
