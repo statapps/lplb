@@ -21,7 +21,6 @@ lple.default <- function(x, y, control, ...){
   sd = fit$sd
   fit$w = w
   fit$B = B
-  fit$control = control
   fit$call <- match.call()
   class(fit) <- "lple"
   

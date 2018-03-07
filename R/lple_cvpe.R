@@ -38,7 +38,7 @@ lple_cvpe = function(X, y, control, K = 5, Dk = NULL, faster = FALSE) {
   return(list(pe=pe, cIndex = cidx))
 }
 
-lple_hSelect = function(X, y, control, step = 0.05, K = 10, faster = FALSE){
+lple_hSelect = function(X, y, control, step = 0.05, K = 5, faster = FALSE){
   h = seq(0.05, 0.95, step)
   pe = h
   n = length(y[, 1])
@@ -49,6 +49,6 @@ lple_hSelect = function(X, y, control, step = 0.05, K = 10, faster = FALSE){
     pe[i] = lple_cvpe(X, y, control, Dk = Dk, faster=faster)$pe
     cat('h = ', h[i], 'CV Prediction Error =', pe[i], '\n')
   }
-  h_opt = h[order(pe)]
+  h_opt = h[order(pe)[1]]
   return(list(h_opt = h_opt, h = h, pe = pe))
 }
