@@ -10,12 +10,12 @@ lple_bootp = function (object, conf.int = 0.95) {
   cat('\nBootstraping...\n')
 
   ##Number of cores
-  n.cores = detectCores() - 1
-  cl = makeCluster(n.cores)
+  n.cores = parallel::detectCores() - 1
+  cl = parallel::makeCluster(n.cores)
   
   cat('number of cores = ', n.cores, '\n')
   #clusterExport(cl, c("X", "y"))
-  clusterEvalQ(cl, library(lplb))
+  #parallel::clusterEvalQ(cl, library(lplb))
   idx = matrix(sample(1:n, n*B, replace = TRUE), B, n)
   X
   y  
