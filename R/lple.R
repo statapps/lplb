@@ -52,7 +52,8 @@ print.lple <- function(x, ...){
   out = cbind(x$w_est, x$beta_w, x$sd)
   colnames(out) = c('w', 'beta(w)', 'sd')
   print(out)
-  cat('Kernel type:',x$kernel, '; Bandwidth (h) = ',x$h, '\n')
+  ctl = x$control
+  cat('Kernel type:',ctl$kernel, '; Bandwidth (h) = ',ctl$h, '\n')
 }
 
 ## plot function.

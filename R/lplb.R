@@ -3,6 +3,7 @@
 #getwd()
 
 ########Load library and functions
+library(parallel)
 library(survival)
 library(MASS)
 

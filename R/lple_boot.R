@@ -1,3 +1,4 @@
+
 lple_boot = function(object,conf.int = 0.95) {
   X = object$X
   y = object$y
