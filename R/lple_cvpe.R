@@ -40,7 +40,7 @@ lple_cvpe = function(X, y, control, K = 5, Dk = NULL, faster = FALSE) {
 
 lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no")){
   parallel = match.arg(parallel)
-  hx = seq(0.05, 0.95, step)
+  hx = seq(0.025, 0.7, step)
   pe = hx
   sqm = seq_len(length(hx))
   n = length(y[, 1])

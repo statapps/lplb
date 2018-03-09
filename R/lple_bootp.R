@@ -41,7 +41,7 @@ lple_bootp = function (object, conf.int = 0.95) {
     boot.beta[r, ] = beta_b
     pb[r] = max(abs(beta_b - beta_w)/res[[r]][[2]])
   }
-  boot.se = apply(boot.beta, 2, sd)
+  boot.se = apply(boot.beta, 1, sd)
   qbp = quantile(pb, conf.int)
   cat("\nDone! Bootstrap scb (p) = ", qbp, '\n')
   return(list(boot.beta = boot.beta, boot.se = boot.se, boot.p = pb, 
