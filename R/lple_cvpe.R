@@ -68,8 +68,8 @@ lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no
     stopCluster(cl)
   }
   h_opt = h[order(pe)[1]]
-  #print(pe)
-  #print(h_opt)
+  print(pe)
+  print(h_opt)
   a = -log(n)/log(h_opt)
   print(a)
   if((2 < a) && (a < 5))
