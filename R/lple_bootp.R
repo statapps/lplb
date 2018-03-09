@@ -1,5 +1,5 @@
 lple_bootp = function (object, conf.int = 0.95) {
-  loadNamespace("parallel")
+  #loadNamespace("parallel")
   X = object$X
   y = object$y
   control = object$control
@@ -10,7 +10,7 @@ lple_bootp = function (object, conf.int = 0.95) {
   cat('\nBootstraping...\n')
 
   ##Number of cores
-  n.cores = parallel::detectCores() - 1
+  n.cores = detectCores() - 1
   cl = parallel::makeCluster(n.cores)
   
   cat('number of cores = ', n.cores, '\n')
