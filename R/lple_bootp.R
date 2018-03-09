@@ -5,6 +5,7 @@ lple_bootp = function (object, conf.int = 0.95) {
   B = control$B
   pb = rep(0, B)
   beta_w = object$beta_w
+  beta_sd = object$sd
   boot.beta = matrix(0, B, length(beta_w))
   cat('\nBootstraping...\n')
 
@@ -39,7 +40,8 @@ lple_bootp = function (object, conf.int = 0.95) {
   for (r in seq_len(B)) {
     beta_b = res[[r]][[1]]
     boot.beta[r, ] = beta_b
-    pb[r] = max(abs(beta_b - beta_w)/res[[r]][[2]])
+    #pb[r] = max(abs(beta_b - beta_w)/res[[r]][[2]])
+    pb[r] = max(abs(beta_b - beta_w)/beta_sd)
   }
   boot.se = apply(boot.beta, 1, sd)
   qbp = quantile(pb, conf.int)
