@@ -1,4 +1,5 @@
 lple_bootp = function (object, conf.int = 0.95) {
+  loadNamespace("parallel")
   X = object$X
   y = object$y
   control = object$control
