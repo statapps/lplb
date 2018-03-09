@@ -63,12 +63,13 @@ lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no
     control
     hx
     #clusterExport(cl, c("X", "y", "control"))
-    #clusterEvalQ(cl, library(lplb))
+    clusterEvalQ(cl, library(lplb))
     pe = parSapply(cl, sqm, fn)
     stopCluster(cl)
   }
   h_opt = h[order(pe)[1]]
-
+  #print(pe)
+  #print(h_opt)
   a = -log(n)/log(h_opt)
   print(a)
   if((2 < a) && (a < 5))
