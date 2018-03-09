@@ -68,15 +68,12 @@ lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no
     stopCluster(cl)
   }
   h_opt = hx[order(pe)[1]]
-  print(pe)
-  print(h_opt)
   a = -log(n)/log(h_opt)
-  print(a)
   if((2 < a) && (a < 5))
-    cat('h = power(n, -1/', a, ') = ', h_opt, '\n')
+    cat('Optimal h = power(n, -1/', a, ') = ', h_opt, '\n')
   else {
     cx = h_opt/n^(-1/3.5)
-    cat('h = ', cx, '* power(n, -1/3.5) =', h_opt, '\n')
+    cat('Optimal h = ', cx, '* power(n, -1/3.5) =', h_opt, '\n')
   }
   return(list(h_opt = h_opt, h = hx, pe = pe))
 }

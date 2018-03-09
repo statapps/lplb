@@ -32,8 +32,8 @@ lple_bootp = function (object, conf.int = 0.95) {
     return(list(beta_b, sd_b))
   }
   ## resampling using parallel computing
-  res = parallel::parLapply(cl, seq_len(B), fn)
-  parallel::stopCluster(cl)
+  res = parLapply(cl, seq_len(B), fn)
+  stopCluster(cl)
 
   ## Clean up the data
   for (r in seq_len(B)) {
