@@ -4,7 +4,7 @@ Title: Local Partial Likelihood Bootstrap (LPLB) test
 Version: 0.1
 Date: 2016-07-29
 Authors@R: person("Siwei Zhang", "and Bingshu Chen", email = "bingshu.chen@queensu.ca", role = c("aut", "cre"))
-Depends: parallel survival
+Depends: parallel, survival
 Description: Local Partial Likelihood Bootstrap (LPLB) is a set of tools to test multivariate covariates-biomatker interactions for survival data
 License: GPL-2
 LazyData: TRUE
