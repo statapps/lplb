@@ -70,7 +70,8 @@ lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no
   h_opt = h[order(pe)[1]]
 
   a = -log(n)/log(h_opt)
-  if((2 < a) & (a < 5))
+  print(a)
+  if((2 < a) && (a < 5))
     cat('h = power(n, -1/', a, ') = ', h_opt, '\n')
   else {
     cx = h_opt/n^(-1/3.5)
