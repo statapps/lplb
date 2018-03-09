@@ -39,9 +39,9 @@ lple_bootp = function (object, conf.int = 0.95) {
   ## Clean up the data
   for (r in seq_len(B)) {
     beta_b = res[[r]][[1]]
+    sd_b   = res[[r]][[2]]
     boot.beta[r, ] = beta_b
-    #pb[r] = max(abs(beta_b - beta_w)/res[[r]][[2]])
-    pb[r] = max(abs(beta_b - beta_w)/beta_sd)
+    pb[r] = max(abs(beta_b - beta_w)/sd_b)
   }
   boot.se = apply(boot.beta, 1, sd)
   qbp = quantile(pb, conf.int)
