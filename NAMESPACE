@@ -1,2 +1,3 @@
 exportPattern("^[[:alpha:]]+")
+import(parallel)
 import(survival)
