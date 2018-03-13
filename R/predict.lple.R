@@ -28,7 +28,7 @@ predict.lple = function(object, newdata, newy = NULL) {
   result = list(lp = lp, risk = risk)
 
   if(!is.null(newy)) {
-    if(is.missing(newdata)) stop("Error: newdata cannot missing when there is new y.")
+    if(missing(newdata)) stop("Error: newdata cannot missing when there is new y.")
     if(length(newy[, 1]) != n)
       stop("Error: new y shall have the same subjects as the new data.")
 
