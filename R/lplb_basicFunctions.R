@@ -254,6 +254,9 @@ lple_fit = function(X, y, control) {
   }
   beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
   betaw[, 1:p1]= beta_w
+  dg = betaw[, p+p1+1] * w_est
+  dw = diff(c(0, w_est))
+  g_w = cumsum(dg*dw)
 
   ## return value
   maxreturn = maxTest(X, y, control, theta, betaw)
@@ -261,7 +264,7 @@ lple_fit = function(X, y, control) {
   sd = maxreturn$sd.err
   colnames(beta_w) = x_names[1:p1]
   fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = maxT, 
-	     sd=sd, X = X, y = y, control = control)
+	     sd=sd, g_w = g_w, X = X, y = y, control = control)
   class(fit)= "lple"
   fit$call = match.call()
   return(fit)
