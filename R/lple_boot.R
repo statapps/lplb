@@ -70,10 +70,11 @@ lple_boot = function(object, method = c("residual", "simple"),
     pb[r] = max(abs(beta_b - beta_w)/boots[[r]][[2]])
   }
   boot.se = apply(boot.beta, 1, sd)
-  qbp = quantile(pb, conf.int)
-  cat("\nDone! Bootstrap scb (p) = ", qbp, "\n")
-  structure(list(boot.beta = boot.beta, boot.se = boot.se, boot.p = pb, 
-	fit = object, qbp = qbp, method = method), class = "lple_boot")
+  #qbp = quantile(pb, conf.int)
+  #cat("\nDone! Bootstrap scb (p) = ", qbp, "\n")
+  structure(list(boot.beta = boot.beta, boot.se = boot.se, 
+	#boot.p = pb, qbp = qbp,
+	fit = object, method = method), class = "lple_boot")
 }
 
 plot.lple_boot = function(x, ...) {
