@@ -1,5 +1,6 @@
 predict.lple = function(object, newdata, newy = NULL) {
   beta = object$beta_w
+  gw   = object$g_w
   w    = object$w_est
   
   sfit = survfit(object, se.fit=FALSE)
@@ -20,7 +21,7 @@ predict.lple = function(object, newdata, newy = NULL) {
 
     ### approximation beta(w) and g(w) for w where beta and g are not estimated
     bnw = apply(beta, 2, .appxf, x=w, xout = nw)
-    gnw = apply(gw,   2, .appxf, x=w, xout = nw)
+    gnw = .appxf(gw, x=w, xout = nw)
     lp  = rowSums(Z*bnw + gnw)
     risk = exp(lp)
   }

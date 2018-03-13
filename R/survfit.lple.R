@@ -21,7 +21,7 @@ survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
 
   ## approximation beta(w) and g(w) for w where beta and g are not estimated
   bnw = apply(beta, 2, .appxf, x=w, xout = nw)
-  gnw = apply(gw,   2, .appxf, x=w, xout = nw)
+  gnw = .appxf(gw, x=w, xout = nw)
 
   lp  = rowSums(Z*bnw) + gnw
   exb = exp(lp)
