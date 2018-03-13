@@ -38,8 +38,7 @@ lple_cvpe = function(X, y, control, K = 5, Dk = NULL, faster = FALSE) {
   return(list(pe=pe, cIndex = cidx))
 }
 
-lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no")){
-  parallel = match.arg(parallel)
+lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = TRUE){
   hx = seq(0.025, 0.7, step)
   pe = hx
   sqm = seq_len(length(hx))
@@ -51,9 +50,7 @@ lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no
     pe = lple_cvpe(X, y, control, Dk = Dk)$pe
   }
 
-  if(parallel == "no") {
-    pe = sapply(sqm, fn)
-  } else {
+  if(parallel) {
     ##Number of cores
     n.cores = detectCores() - 1
     cl = makeCluster(n.cores)
@@ -66,7 +63,9 @@ lple_hSel = function(X, y, control, step = 0.025, K = 5, parallel = c("yes", "no
     #clusterEvalQ(cl, library(lplb))
     pe = parSapply(cl, sqm, fn)
     stopCluster(cl)
-  }
+  } else 
+    pe = sapply(sqm, fn)
+  
   h_opt = hx[order(pe)[1]]
   a = -log(n)/log(h_opt)
   if((2 < a) && (a < 5))
