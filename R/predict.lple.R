@@ -25,7 +25,7 @@ predict.lple = function(object, newdata, newy = NULL) {
     lp  = rowSums(Z*bnw + gnw)
     risk = exp(lp)
   }
-  result = list(lp = xb, risk = exb)
+  result = list(lp = lp, risk = risk)
 
   if(!is.null(newy)) {
     if(is.missing(newdata)) stop("Error: newdata cannot missing when there is new y.")
