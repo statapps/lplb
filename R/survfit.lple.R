@@ -1,6 +1,7 @@
 ### baseline cumulative hazard function and martingale residuals for LPLE
 survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
   beta = object$beta_w
+  gw   = ojbect$g_w
   w    = object$w_est
   y    = object$y
 
@@ -18,9 +19,12 @@ survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
   events = sum(nevent)
   n.risk = n:1
 
-  ### approximation beta(w) for w where beta is not estimated
-  bz = apply(beta, 2, .appxf, x=w, xout = nw)
-  exb = exp(rowSums(Z*bz))
+  ## approximation beta(w) and g(w) for w where beta and g are not estimated
+  bnw = apply(beta, 2, .appxf, x=w, xout = nw)
+  gnw = apply(gw,   2, .appxf, x=w, xout = nw)
+
+  lp  = rowSums(Z*bnw) + gnw
+  exb = exp(lp)
   rcumsum <- function(x) rev(cumsum(rev(x))) # sum from last to first
   rxb = rcumsum(exb)         #sum over risk set 
   haz = nevent/rxb           #hazard function
@@ -28,10 +32,11 @@ survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
   cumhaz = cumsum(haz)       #Breslow estimate of cumulative hazard
   surv   = exp(-cumhaz)      #survival function S(t)
   residuals = nevent - cumhaz*exb # Martingale residuals
-  ### code above has been validated for cumhaz and surv function
+  ## code above has been validated for cumhaz and surv function
 
   result = list(n = n, events = events, time = time, cumhaz = cumhaz, 
-		hazard=haz, surv=surv, n.event = nevent, n.risk = n.risk,
+		hazard=haz, surv=surv, lp = lp, risk = exb, 
+		n.event = nevent, n.risk = n.risk,
 		varhaz=varhaz, residuals = residuals)
 
   if(se.fit) {
@@ -47,4 +52,16 @@ survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
   class(result) = c('survfit.cox', 'survfit')
   return(result)
   ### see also basehaz()
+}
+
+
+### Residuals of LPLE 
+residuals.lple = function(object, type=c("martingale", "deviance")) {
+  type = match.arg(type)
+  sfit = survfit(object, se.fit = FALSE)
+  rr = sfit$residuals
+  status = sfit$n.event
+  drr = sign(rr)*sqrt(-2*(rr+ifelse(status==0, 0, status*log(status-rr))))
+  resid = switch(type, martingale = rr, deviance = drr)
+  return(resid)
 }
