@@ -1,7 +1,7 @@
 ### baseline cumulative hazard function and martingale residuals for LPLE
 survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
   beta = object$beta_w
-  gw   = ojbect$g_w
+  gw   = object$g_w
   w    = object$w_est
   y    = object$y
 
