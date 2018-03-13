@@ -45,7 +45,7 @@ predict.lple = function(object, newdata, newy = NULL) {
 
     #### prediction error based on martingle residual, may not work as good
     chz = .appxf(sfit$cumhaz, x=sfit$time, xout=time)
-    residuals = (status - chz*exb)
+    residuals = (status - chz*risk)
     result$pe.mres = sum(residuals^2)
   }
   result$residuals = residuals
