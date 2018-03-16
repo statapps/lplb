@@ -60,11 +60,11 @@ interaction_X_w0=function(X, p1, w0){
 .appxf = function(y, x, xout){ approx(x,y,xout=xout,rule=2)$y }
 
 ### Calculate bias for lple
-.bias = function(bw, kn, h) {
+.bias = function(bw, w, kn, h) {
   f = function(x) { x^2*K_func(x, 0, 1, kn) }
   mu2 = integrate(f, -5, 5)$value
   dbw = diff(bw)
-  dw  = diff(object$w_est)
+  dw  = diff(w)
   bw1 = dbw/dw
   
   dw1 = dw[-1]
@@ -272,7 +272,7 @@ lple_fit = function(X, y, control) {
   dg = betaw[, p+p1+1] * w_est
   dw = diff(c(0, w_est))
   g_w = cumsum(dg*dw)
-  bias = .bias(beta_w, kernel, h)
+  bias = .bias(beta_w, w_est, kernel, h)
 
   ## return value
   maxreturn = maxTest(X, y, control, theta, betaw)
