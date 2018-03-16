@@ -59,6 +59,21 @@ interaction_X_w0=function(X, p1, w0){
 ### Approximate function
 .appxf = function(y, x, xout){ approx(x,y,xout=xout,rule=2)$y }
 
+### Calculate bias for lple
+.bias = function(bw, kn, h) {
+  f = function(x) { x^2*K_func(x, 0, 1, kn) }
+  mu2 = integrate(f, -5, 5)$value
+  dbw = diff(bw)
+  dw  = diff(object$w_est)
+  bw1 = dbw/dw
+  
+  dw1 = dw[-1]
+  bw2 = diff(bw1)/dw1
+  lw = length(bw2)
+  bw2 = c(bw2[1], bw2, bw2[lw])
+  bias = h^2*bw2*mu2/2
+}
+
 ### 02. Calculate S(k)_theta and S(k)_fai
 # Since St0 to St2 do not change w0, so do I_theta and pi_theta, we can separate Sk2 into two parts: Sk2t and Sk2f
 # including the calculation of I and pi
@@ -257,6 +272,7 @@ lple_fit = function(X, y, control) {
   dg = betaw[, p+p1+1] * w_est
   dw = diff(c(0, w_est))
   g_w = cumsum(dg*dw)
+  bias = .bias(beta_w, kernel, h)
 
   ## return value
   maxreturn = maxTest(X, y, control, theta, betaw)
@@ -264,7 +280,7 @@ lple_fit = function(X, y, control) {
   sd = maxreturn$sd.err
   colnames(beta_w) = x_names[1:p1]
   fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = maxT, 
-	     sd=sd, g_w = g_w, X = X, y = y, control = control)
+	     bias = bias, sd=sd, g_w = g_w, X = X, y = y, control = control)
   class(fit)= "lple"
   fit$call = match.call()
   return(fit)
