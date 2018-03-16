@@ -60,7 +60,13 @@ interaction_X_w0=function(X, p1, w0){
 .appxf = function(y, x, xout){ approx(x,y,xout=xout,rule=2)$y }
 
 ### Calculate bias for lple
-.bias = function(bw, w, kn, h) {
+bias = function(object) {
+  control = object$control
+  h  = control$h
+  kn = control$kernel
+  bw = object$beta_w
+  w  = object$w_est
+
   f = function(x) { x^2*K_func(x, 0, 1, kn) }
   mu2 = integrate(f, -5, 5)$value
   dbw = diff(bw)
@@ -231,7 +237,7 @@ maxTest = function(X,y,control,theta, betaw){
 }
 
 ### 04. estimate beta(w) (Under H1) and theta (Under H0)
-lple_fit = function(X, y, control) {
+lple_fit = function(X, y, control, se.fit = TRUE) {
   h = control$h
   kernel = control$kernel
   w_est = control$w_est
@@ -272,15 +278,18 @@ lple_fit = function(X, y, control) {
   dg = betaw[, p+p1+1] * w_est
   dw = diff(c(0, w_est))
   g_w = cumsum(dg*dw)
-  bias = .bias(beta_w, w_est, kernel, h)
 
   ## return value
-  maxreturn = maxTest(X, y, control, theta, betaw)
-  maxT = maxreturn$maxQ1
-  sd = maxreturn$sd.err
+  sd = NULL
+  maxT = NULL
+  if(se.fit) {
+    maxreturn = maxTest(X, y, control, theta, betaw)
+    maxT = maxreturn$maxQ1
+    sd = maxreturn$sd.err
+  }
   colnames(beta_w) = x_names[1:p1]
   fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = maxT, 
-	     bias = bias, sd=sd, g_w = g_w, X = X, y = y, control = control)
+	     sd=sd, g_w = g_w, X = X, y = y, control = control)
   class(fit)= "lple"
   fit$call = match.call()
   return(fit)
