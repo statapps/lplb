@@ -250,9 +250,6 @@ lple_fit = function(X, y, control, se.fit = TRUE) {
 
   ## X_fai is the data of the interaction model (H1), estimator is beta(w)
   X_fai=interaction_X(X,p1)
-  ## X is the data of the no-interaction model (H0), estimator is theta
-  fitH0=coxph(y ~ X)
-  theta=fitH0$coef
 
   ## estimate beta(w)
   ## set matrix "betaw" to save the coef of Z1 to Zp, 
@@ -283,6 +280,9 @@ lple_fit = function(X, y, control, se.fit = TRUE) {
   sd = NULL
   maxT = NULL
   if(se.fit) {
+    ## X is the data of the no-interaction model (H0), estimator is theta
+    fitH0=coxph(y ~ X)
+    theta=fitH0$coef
     maxreturn = maxTest(X, y, control, theta, betaw)
     maxT = maxreturn$maxQ1
     sd = maxreturn$sd.err
