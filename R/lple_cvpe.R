@@ -40,6 +40,9 @@ lple_cvpe = function(X, y, control, K = 5, Dk = NULL, faster = FALSE) {
 
 lple_hSel = function(X, y, control, m = 29, K = 5, parallel = TRUE){
   #hx = seq(0.025, 0.5, step)
+  X = X
+  y = y
+  control = control
   n = length(y[, 1])
   alpha = seq(2, 5, length.out=m)
   hx = n^(-1/alpha)
