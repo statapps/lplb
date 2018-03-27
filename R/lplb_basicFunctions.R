@@ -228,7 +228,7 @@ maxTest = function(X,y,control,theta, betaw){
     sd.err[i, ] = sqrt(diag(gamma11))
 
     ## calculate Q1 at w0=w_est[i]
-    var_hat = sigma11 + gamma11 - 2*omiga11
+    var_hat = sigma11 + gamma11 - omiga11 - t(omiga11)  #2*omiga11
     diff_hat = diff_est[i, ] # class: numeric
     Q1[i] = as.numeric( t(diff_hat) %*% solve(var_hat) %*% as.matrix(diff_hat))
   }
@@ -237,7 +237,7 @@ maxTest = function(X,y,control,theta, betaw){
 }
 
 ### 04. estimate beta(w) (Under H1) and theta (Under H0)
-lple_fit = function(X, y, control, se.fit = TRUE) {
+lple_fit = function(X, y, control, se.fit = TRUE, maxT = FALSE) {
   h = control$h
   kernel = control$kernel
   w_est = control$w_est
@@ -246,10 +246,12 @@ lple_fit = function(X, y, control, se.fit = TRUE) {
   p = length(X[1, ])-1 # number of Zi's
   n = length(X[ ,1]) # number of observations
   m = length(w_est) # number of estimate points; choose from intervel (0,1) arbitrarily
-  X = as.matrix(X)  # coxph() need X to be class matrix
+  X = as.matrix(X)    # coxph() need X to be class matrix
+  w = X[ ,p+1] # w from data matric
+  id = 1:n
 
   ## X_fai is the data of the interaction model (H1), estimator is beta(w)
-  X_fai=interaction_X(X,p1)
+  X_fai=interaction_X(X, p1)
 
   ## estimate beta(w)
   ## set matrix "betaw" to save the coef of Z1 to Zp, 
@@ -259,27 +261,38 @@ lple_fit = function(X, y, control, se.fit = TRUE) {
   ## set matrix "beta_w" to save only the Z1 to Zp1, 
   ## by which we can plot the relationship of beta(w) vs. w_est. dim: (m*p1)
   beta_w = matrix(0, m, p1)
-
+  sd     = beta_w
   ## Check if the data is sorted by time
   j = sample(1:n, 2)
   tm = y[j, 1]
   if((j[1]-j[2])*(tm[1]-tm[2])<0) 
     stop("Survival time shall be sorted! Check your program or use lple() directly")
   for (i in 1:m) {
-    wg = K_func(X_fai[ ,p+p1+1], w_est[i],h, kernel)
-    fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
+    w0 = w_est[i]
+    wg = K_func(w, w0, h, kernel)
+
+    if(se.fit) {
+      XR = interaction_X_w0(X,p1,w0)
+      fit = coxph(y ~ XR+cluster(id), subset= (wg>0), weights=wg)
+      V = vcov(fit)[1:p1, 1:p1]
+      sd[i, ] = sqrt(diag(V))
+    } else fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
     betaw[i, ] = fit$coef
   }
-  beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
-  betaw[, 1:p1]= beta_w
-  dg = betaw[, p+p1+1] * w_est
+  if(se.fit){
+    beta_w = betaw[, (1:p1)]
+    dg     = betaq[, p+p1+1]
+  } else {
+    beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
+    betaw[, 1:p1]= beta_w
+    dg = betaw[, p+p1+1] * w_est
+  }
   dw = diff(c(0, w_est))
   g_w = cumsum(dg*dw)
 
   ## return value
-  sd = NULL
   maxT = NULL
-  if(se.fit) {
+  if(maxT) {
     ## X is the data of the no-interaction model (H0), estimator is theta
     fitH0=coxph(y ~ X)
     theta=fitH0$coef
