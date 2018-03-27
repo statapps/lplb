@@ -237,7 +237,7 @@ maxTest = function(X,y,control,theta, betaw){
 }
 
 ### 04. estimate beta(w) (Under H1) and theta (Under H0)
-lple_fit = function(X, y, control, se.fit = TRUE, maxT = FALSE) {
+lple_fit = function(X, y, control, se.fit = FALSE, maxT = FALSE) {
   h = control$h
   kernel = control$kernel
   w_est = control$w_est
@@ -271,17 +271,18 @@ lple_fit = function(X, y, control, se.fit = TRUE, maxT = FALSE) {
     w0 = w_est[i]
     wg = K_func(w, w0, h, kernel)
 
-    if(se.fit) {
+    if(!se.fit) {
       XR = interaction_X_w0(X,p1,w0)
       fit = coxph(y ~ XR+cluster(id), subset= (wg>0), weights=wg)
       V = vcov(fit)[1:p1, 1:p1]
-      sd[i, ] = sqrt(diag(V))
+      if(p1 > 1) V = diag(V)
+      sd[i, ] = sqrt(V)
     } else fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
     betaw[i, ] = fit$coef
   }
-  if(se.fit){
+  if(!se.fit){
     beta_w = betaw[, (1:p1)]
-    dg     = betaq[, p+p1+1]
+    dg     = betaw[, p+p1+1]
   } else {
     beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
     betaw[, 1:p1]= beta_w
@@ -291,17 +292,17 @@ lple_fit = function(X, y, control, se.fit = TRUE, maxT = FALSE) {
   g_w = cumsum(dg*dw)
 
   ## return value
-  maxT = NULL
+  max.T = NULL
   if(maxT) {
     ## X is the data of the no-interaction model (H0), estimator is theta
     fitH0=coxph(y ~ X)
     theta=fitH0$coef
     maxreturn = maxTest(X, y, control, theta, betaw)
-    maxT = maxreturn$maxQ1
+    max.T = maxreturn$maxQ1
     sd = maxreturn$sd.err
   }
   colnames(beta_w) = x_names[1:p1]
-  fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = maxT, 
+  fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = max.T, 
 	     sd=sd, g_w = g_w, X = X, y = y, control = control)
   class(fit)= "lple"
   fit$call = match.call()
