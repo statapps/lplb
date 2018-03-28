@@ -237,7 +237,7 @@ maxTest = function(X,y,control,theta, betaw){
 }
 
 ### 04. estimate beta(w) (Under H1) and theta (Under H0)
-lple_fit = function(X, y, control, se.fit = FALSE, maxT = FALSE) {
+lple_fit = function(X, y, control, maxT = FALSE) {
   h = control$h
   kernel = control$kernel
   w_est = control$w_est
@@ -271,7 +271,7 @@ lple_fit = function(X, y, control, se.fit = FALSE, maxT = FALSE) {
     w0 = w_est[i]
     wg = K_func(w, w0, h, kernel)
 
-    if(!se.fit) {
+    if(!maxT) {
       XR = interaction_X_w0(X,p1,w0)
       fit = coxph(y ~ XR+cluster(id), subset= (wg>0), weights=wg)
       V = vcov(fit)[1:p1, 1:p1]
@@ -280,8 +280,8 @@ lple_fit = function(X, y, control, se.fit = FALSE, maxT = FALSE) {
     } else fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
     betaw[i, ] = fit$coef
   }
-  if(!se.fit){
-    beta_w = betaw[, (1:p1)]
+  if(!maxT){
+    beta_w[, 1:p1] = betaw[, (1:p1)]
     dg     = betaw[, p+p1+1]
   } else {
     beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
