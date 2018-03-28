@@ -90,5 +90,5 @@ plot.lple_boot = function(x, ...) {
   #beta_bt = apply(x$boot.beta, 2, mean)
   #lines(w, beta_bt, lty = 2, lwd = 2, col = 'blue')
   lines(w, LB, col = 'green')
-  lines(w, UB.up, col = 'green')
+  lines(w, UB, col = 'green')
 }
