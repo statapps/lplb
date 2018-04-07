@@ -25,7 +25,7 @@ lple_cvpe = function(X, y, control, K = 10, Dk = NULL, faster = FALSE) {
     X.test = X[Dk == i, ]
     y.test = y[Dk == i, ]
    
-    fit = lple_fit(Xi, yi, ctl)
+    fit = lple_fit(Xi, yi, ctl, se.fit=FALSE)
    
     prd = predict(fit, X.test, y.test)
     # risk score and prediction error

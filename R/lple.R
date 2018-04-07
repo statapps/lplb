@@ -49,8 +49,8 @@ print.lple <- function(x, ...){
   print(x$call)
   p1 = ncol(x$beta_w)
 
-  out = cbind(x$w_est, x$beta_w, x$sd)
-  colnames(out) = c('w', 'beta(w)', 'sd')
+  out = cbind(x$w_est, x$beta_w, x$sd, x$dbeta_w, x$dbeta_sd)
+  if(p1==1) colnames(out) = c('w', 'beta(w)', 'sd', 'dbeta_w', 'dbeta_sd')
   print(out)
   ctl = x$control
   cat('Kernel type:',ctl$kernel, '; Bandwidth (h) = ',ctl$h, '\n')

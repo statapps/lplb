@@ -64,25 +64,24 @@ bias = function(object) {
   control = object$control
   h  = control$h
   kn = control$kernel
-  bw = object$beta_w
+  db = object$dbeta_w
   w  = object$w_est
 
   f = function(x) { x^2*K_func(x, 0, 1, kn) }
   mu2 = integrate(f, -5, 5)$value
-  dbw = diff(bw)
+  dbw = diff(db)
   dw  = diff(w)
-  bw1 = dbw/dw
+  bw2 = dbw/dw
   
-  dw1 = dw[-1]
-  bw2 = diff(bw1)/dw1
-  lw = length(bw2)
-  bw2 = c(bw2[1], bw2, bw2[lw])
+  bw2 = c(bw2[1], bw2)
   bias = h^2*bw2*mu2/2
 }
 
 ### 02. Calculate S(k)_theta and S(k)_fai
-# Since St0 to St2 do not change w0, so do I_theta and pi_theta, we can separate Sk2 into two parts: Sk2t and Sk2f
+# Since St0 to St2 do not change w0, so do I_theta and pi_theta, 
+# we can separate Sk2 into two parts: Sk2t for theta and Sk2f for fai
 # including the calculation of I and pi
+
 ## 02_1 S(k)_theta and I_theta, pi_theta
 Sk2t = function(X, y, theta) {
   ## NOTE!!!!: input X should be ordered by time already!!!!!!!!!!!!!
@@ -237,7 +236,7 @@ maxTest = function(X,y,control,theta, betaw){
 }
 
 ### 04. estimate beta(w) (Under H1) and theta (Under H0)
-lple_fit = function(X, y, control, maxT = FALSE) {
+lple_fit = function(X, y, control, se.fit = TRUE) {
   h = control$h
   kernel = control$kernel
   w_est = control$w_est
@@ -261,7 +260,11 @@ lple_fit = function(X, y, control, maxT = FALSE) {
   ## set matrix "beta_w" to save only the Z1 to Zp1, 
   ## by which we can plot the relationship of beta(w) vs. w_est. dim: (m*p1)
   beta_w = matrix(0, m, p1)
-  sd     = beta_w
+  dbeta_w = beta_w
+  sd      = beta_w
+  dbeta_sd= sd
+  selb  = 1:p1
+  seldb = (p+1):(p+p1)
   ## Check if the data is sorted by time
   j = sample(1:n, 2)
   tm = y[j, 1]
@@ -271,29 +274,28 @@ lple_fit = function(X, y, control, maxT = FALSE) {
     w0 = w_est[i]
     wg = K_func(w, w0, h, kernel)
 
-    if(!maxT) {
-      XR = interaction_X_w0(X,p1,w0)
-      fit = coxph(y ~ XR+cluster(id), subset= (wg>0), weights=wg)
-      V = vcov(fit)[1:p1, 1:p1]
-      if(p1 > 1) V = diag(V)
-      sd[i, ] = sqrt(V)
-    } else fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
+    XR = interaction_X_w0(X,p1,w0)
+    fit = coxph(y ~ XR+cluster(id), subset= (wg>0), weights=wg)
     betaw[i, ] = fit$coef
+    V = sqrt(diag(vcov(fit)))
+    sd[i, ] = V[selb]
+    dbeta_sd[i, ] = V[seldb]
+    #fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
   }
-  if(!maxT){
-    beta_w[, 1:p1] = betaw[, (1:p1)]
-    dg     = betaw[, p+p1+1]
-  } else {
-    beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
-    betaw[, 1:p1]= beta_w
-    dg = betaw[, p+p1+1] * w_est
-  }
+  beta_w[, 1:p1]  = betaw[, selb]
+  dbeta_w[, 1:p1] = betaw[, seldb]
+  dg = betaw[, p+p1+1]
+  # old code
+  #fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
+  #beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
+  #betaw[, 1:p1]= beta_w
+  #dg = betaw[, p+p1+1] * w_est
   dw = diff(c(0, w_est))
   g_w = cumsum(dg*dw)
 
   ## return value
   max.T = NULL
-  if(maxT) {
+  if(se.fit) {
     ## X is the data of the no-interaction model (H0), estimator is theta
     fitH0=coxph(y ~ X)
     theta=fitH0$coef
@@ -302,8 +304,11 @@ lple_fit = function(X, y, control, maxT = FALSE) {
     sd = maxreturn$sd.err
   }
   colnames(beta_w) = x_names[1:p1]
-  fit = list(w_est = w_est, beta_w = beta_w, betaw = betaw, maxT = max.T, 
-	     sd=sd, g_w = g_w, X = X, y = y, control = control)
+  colnames(dbeta_w)= x_names[1:p1]
+  fit = list(w_est = w_est, beta_w = beta_w, dbeta_w = dbeta_w, 
+	     betaw = betaw, maxT = max.T, 
+	     sd=sd, dbeta_sd = dbeta_sd, g_w = g_w, 
+	     X = X, y = y, control = control)
   class(fit)= "lple"
   fit$call = match.call()
   return(fit)
