@@ -12,6 +12,9 @@ x.cdf = function(x) {
 #reverse cumsum
 rcumsum=function(x) rev(cumsum(rev(x))) # sum from last to first
 
+### Approximate function
+.appxf = function(y, x, xout){ approx(x,y,xout=xout,rule=2)$y }
+
 ## 01_2) Kernel function
 K_func<-function(w, u, h, kernel = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "cosine", "optcosine")) {
   kernel = match.arg(kernel)
@@ -58,9 +61,6 @@ interaction_X_w0=function(X, p1, w0){
   X2[, p+p1+1] = w-w0
   return(X2)
 }
-
-### Approximate function
-.appxf = function(y, x, xout){ approx(x,y,xout=xout,rule=2)$y }
 
 ### Calculate bias for lple
 bias = function(object) {
@@ -298,10 +298,12 @@ lple_fit = function(X, y, control, se.fit = TRUE, maxT=FALSE) {
 
   ## Calculate standard error and bias
   bias = NULL
+  haz  = NULL
   if(se.fit) {
     fse = lple_se(X, y, control, betaw, g_w)
     sd = fse$sd.err 
     bias = fse$bias
+    haz  = fse$haz
   }
 
   ## return value
@@ -318,7 +320,7 @@ lple_fit = function(X, y, control, se.fit = TRUE, maxT=FALSE) {
   colnames(dbeta_w)= x_names[1:p1]
   fit = list(w_est = w_est, beta_w = beta_w, dbeta_w = dbeta_w, 
 	     beta_bias = bias, betaw = betaw, maxT = max.T, 
-	     sd=sd, dbeta_sd = dbeta_sd, g_w = g_w, 
+	     sd=sd, dbeta_sd = dbeta_sd, g_w = g_w, haz = haz, 
 	     X = X, y = y, control = control)
   class(fit)= "lple"
   fit$call = match.call()

@@ -53,7 +53,6 @@ lple_se = function(X, y, control, betaw, gw){
   p = ncol(X)
   beta = as.matrix(betaw[, 1:p1], n, p1)
   nw = X[, p]
-  print(nw)
   nevent = y[, 2]
 
   Z = as.matrix(X[, -p])
@@ -63,8 +62,9 @@ lple_se = function(X, y, control, betaw, gw){
   gnw = .appxf(gw, x=w, xout = nw)
   lp  = rowSums(Z*bnw) + gnw
   exb = exp(lp)
-  rxb = rcumsum(exb)         #sum over risk set 
-  haz = exb*nevent/rxb       #hazard function
+  rxb = rcumsum(exb)     #sum over risk set 
+  haz0= nevent/rxb       #hazard function
+  haz = exb*haz0
 
   Sm = matrix(1, n, n)
   Sm[lower.tri(Sm)] = 0
@@ -86,5 +86,5 @@ lple_se = function(X, y, control, betaw, gw){
     #print(solve(pi_fai)%*%t(skf$B_fai))
     bias[i, ] = (A1%*%skf$B_n)[1:p1]
   }
-  return(list(sd.err = sd.err, bias = bias))
+  return(list(sd.err = sd.err, bias = bias, haz = haz0))
 }
