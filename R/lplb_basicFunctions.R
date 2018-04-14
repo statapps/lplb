@@ -9,6 +9,9 @@ x.cdf = function(x) {
   return(p)
 }
 
+#reverse cumsum
+rcumsum=function(x) rev(cumsum(rev(x))) # sum from last to first
+
 ## 01_2) Kernel function
 K_func<-function(w, u, h, kernel = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "cosine", "optcosine")) {
   kernel = match.arg(kernel)
@@ -236,7 +239,7 @@ maxTest = function(X,y,control,theta, betaw){
 }
 
 ### 04. estimate beta(w) (Under H1) and theta (Under H0)
-lple_fit = function(X, y, control, se.fit = TRUE) {
+lple_fit = function(X, y, control, se.fit = TRUE, maxT=FALSE) {
   h = control$h
   kernel = control$kernel
   w_est = control$w_est
@@ -293,9 +296,17 @@ lple_fit = function(X, y, control, se.fit = TRUE) {
   dw = diff(c(0, w_est))
   g_w = cumsum(dg*dw)
 
+  ## Calculate standard error and bias
+  bias = NULL
+  if(se.fit) {
+    fse = lple_se(X, y, control, betaw, g_w)
+    sd = fse$sd.err 
+    bias = fse$bias
+  }
+
   ## return value
   max.T = NULL
-  if(se.fit) {
+  if(maxT) {
     ## X is the data of the no-interaction model (H0), estimator is theta
     fitH0=coxph(y ~ X)
     theta=fitH0$coef
@@ -306,7 +317,7 @@ lple_fit = function(X, y, control, se.fit = TRUE) {
   colnames(beta_w) = x_names[1:p1]
   colnames(dbeta_w)= x_names[1:p1]
   fit = list(w_est = w_est, beta_w = beta_w, dbeta_w = dbeta_w, 
-	     betaw = betaw, maxT = max.T, 
+	     beta_bias = bias, betaw = betaw, maxT = max.T, 
 	     sd=sd, dbeta_sd = dbeta_sd, g_w = g_w, 
 	     X = X, y = y, control = control)
   class(fit)= "lple"

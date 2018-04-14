@@ -25,8 +25,7 @@ survfit.lple = function(object, se.fit=TRUE, conf.int = .95) {
 
   lp  = rowSums(Z*bnw) + gnw
   exb = exp(lp)
-  rcumsum <- function(x) rev(cumsum(rev(x))) # sum from last to first
-  rxb = rcumsum(exb)         #sum over risk set 
+  rxb = rcumsum(exb)         #sum over risk set using reverse cumsum
   haz = nevent/rxb           #hazard function
   varhaz = nevent/rxb^2      #var for haz
   cumhaz = cumsum(haz)       #Breslow estimate of cumulative hazard
