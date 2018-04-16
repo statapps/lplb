@@ -2,21 +2,20 @@
 Sk2g = function(X, y, control, bw0, w0, haz) {
   kernel = control$kernel
   status = y[, 2]
-  h = control$h
-  #w_est = control$w_est
+  h  = control$h
   p1 = control$p1
-  X_R = interaction_X_w0(X, p1, w0)
-  p = ncol(X) - 1
+  XR = interaction_X_w0(X, p1, w0)
+  p  = ncol(X) - 1
   p2 = p + p1 + 1 #p2 total vector length for fai
-  n = nrow(X)
-  w = X[, ncol(X)]
+  n  = nrow(X)
+  w  = X[, ncol(X)]
   bw = as.matrix(bw0)
   
-  R = t(X_R)
   H = diag(rep(c(1, h, h), c(p, p1, 1)), p2, p2)
-  H1 = diag(rep(c(1, 1/h, 1/h), c(p, p1, 1)), p2, p2)
-  fai = H  %*% bw
-  U   = t(H1 %*% R)
+  H1= diag(rep(c(1, 1/h, 1/h), c(p, p1, 1)), p2, p2)
+  fai= H %*% bw
+  #U = t(H1 %*% t(XR))
+  U  = XR%*%H1
   
   kh = K_func(w, w0, h, kernel)
   ezb_fai = as.vector(exp(U %*% fai)) * kh
@@ -37,8 +36,8 @@ Sk2g = function(X, y, control, bw0, w0, haz) {
   TSf2   = aperm(array(TSf1_2, c(p2, p2, n)), c(3, 1, 2))
 
   Pi_n = colSums(status * (TSf2*kh^2), dims = 1)
-  B_n  = colSums(kh*TSf1*haz,   dims = 1)
-  
+  B_n  = colSums(kh*TSf1*haz, dims = 1)
+ 
   Zt_fai = apply(U, 1, function(x) {return(x %*% t(x))})
   Z2_fai = array(Zt_fai, c(p2, p2, n))
   Z2ezb_fai = Z2_fai * array(rep(ezb_fai, each = p2 * p2), c(p2, p2, n))
@@ -78,20 +77,20 @@ lple_se = function(X, y, control, betaw, gw){
 
   mtrx2 = matrix(0, nrow = p1, ncol = p + p1)
   for (i in 1:p1) mtrx2[i, i] = 1
-  
+ 
   sd.err = matrix(0, nrow = m, ncol = p1)
   bias = sd.err
   for (i in 1:m) {
-    w0 = w[i]
+    w0  = w[i]
     bw0 = betaw[i, ]
     skf = Sk2g(X, y, control, bw0, w0, haz)
     A_n = skf$A_n
     A1  = solve(A_n)
-    Pi_n = skf$Pi_n
-    gamma = A1 %*% Pi_n %*% A1 
-    gamma11 = mtrx2 %*% gamma %*% t(mtrx2)
-    sd.err[i, ] = sqrt(diag(gamma11))
-    bias[i, ] = (A1%*%skf$B_n)[1:p1]
+    Pi_n= skf$Pi_n
+    gamma  = A1 %*% Pi_n %*% A1 
+    gamma11= mtrx2 %*% gamma %*% t(mtrx2)
+    sd.err[i, ]= sqrt(diag(gamma11))
+    bias[i, ]  = (A1%*%skf$B_n)[1:p1]
   }
   return(list(sd.err = sd.err, bias = bias, haz = haz0))
 }
