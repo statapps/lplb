@@ -1,5 +1,5 @@
 
-Sk2g = function(X, y, control, bw0, w0, Haz) {
+Sk2g = function(X, y, control, bw0, w0, haz0, exb){
   kernel = control$kernel
   status = y[, 2]
   h  = control$h
@@ -37,7 +37,16 @@ Sk2g = function(X, y, control, bw0, w0, Haz) {
 
   Pi_n = colSums(status * (TSf2*kh^2), dims = 1)
   #print(sum(haz))
-  B_n  = colSums(kh*TSf1*Haz, dims = 1)
+  # 
+  # incorrect
+  #B_n  = colSums(kh*TSf1*Haz, dims = 1)
+
+  #correction
+  Ratio=Sf1/c(Sf0)
+  ## \int_0^tau Y(u) lambda_0(u) = cumsum(haz0) where t_i is sorted
+  B_n = kh*exb*(U*cumsum(haz0)-apply(Ratio*haz0, 2, cumsum))
+  B_n = apply(B_n, 2, sum)
+  #########
  
   Zt_fai = apply(U, 1, function(x) {return(x %*% t(x))})
   Z2_fai = array(Zt_fai, c(p2, p2, n))
@@ -76,7 +85,6 @@ lple_se = function(X, y, control, betaw, gw){
   rxb = rcumsum(exb)     #sum over risk set 
   haz0= nevent/rxb       #hazard function
   haz = exb*haz0
-  Haz = exb*cumsum(haz0)
 
   mtrx2 = matrix(0, nrow = p1, ncol = p + p1)
   for (i in 1:p1) mtrx2[i, i] = 1
@@ -86,7 +94,7 @@ lple_se = function(X, y, control, betaw, gw){
   for (i in 1:m) {
     w0  = w[i]
     bw0 = betaw[i, ]
-    skf = Sk2g(X, y, control, bw0, w0, Haz)
+    skf = Sk2g(X, y, control, bw0, w0, haz0, exb)
     A_n = skf$A_n
     A1  = solve(A_n)
     Pi_n= skf$Pi_n
