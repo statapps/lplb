@@ -295,8 +295,9 @@ lple_fit = function(X, y, control, se.fit = TRUE, maxT=FALSE) {
   #beta_w[, 1:p1] = betaw[ ,(1:p1)]+betaw[ ,(p+1):(p+p1)] * w_est
   #betaw[, 1:p1]= beta_w
   #dg = betaw[, p+p1+1] * w_est
-  dw = diff(c(0, w_est))
-  g_w = cumsum(dg*dw)
+  dg1 = c(dg[1], dg[1:(length(dg)-1)])\
+  dgm = (dg + dg1)/2
+  g_w = cumsum(dgm*diff(c(0, w_est)))
 
   ## Calculate standard error and bias
   bias = NULL
