@@ -70,13 +70,15 @@ bias = function(object) {
   db = object$dbeta_w
   w  = object$w_est
 
+  q = length(db)
+  b1 = c(db[1],   db[1:(q-1)])
+  w1 = c( w[1],    w[1:(q-1)])
+  b2 = c(db[2:q], db[q])
+  w2 = c( w[2:q],  w[q])
+
   f = function(x) { x^2*K_func(x, 0, 1, kn) }
   mu2 = integrate(f, -5, 5)$value
-  dbw = diff(db)
-  dw  = diff(w)
-  bw2 = dbw/dw
-  
-  bw2 = c(bw2[1], bw2)
+  bw2 = (b2-b1)/(w2-w1)
   bias = h^2*bw2*mu2/2
 }
 
