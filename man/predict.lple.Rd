@@ -28,9 +28,11 @@ Compute fitted values and prediction error for a model fitted by lple
 predict.lple returns a list of predicted values, prediction error and residuals. 
 
   \item{lp}{linear predictor of beta(w)*Z, where beta(w) is the fitted regression coefficient and Z is covariance matrix.}
-  \item{risk}{risk score, exp(lp).}
+  \item{risk}{risk score, exp(lp). When new y is provided, both lp and risk will be ordered by survival time of the new y.}
   \item{residuals}{martingale residuals of the prediction, if available.} 
-  \item{pe.mres}{prediction error based on martingale residual, if both newdata and newy is provided}
+  \item{pe.mres}{prediction error based on martingale residual, if both new data and new y is provided.}
+  \item{cumhaz}{cumulative hzard function.}
+  \item{time}{time for cumulative hazard function. Time from new y will be used is provided}
 }
 \author{Bingshu E. Chen}
 \seealso{

@@ -1,7 +1,8 @@
 ### prediction error using crossvalidation
-lple_cvpe = function(X, y, control, K = 10, Dk = NULL, faster = FALSE) {
+lple_cvpe = function(X, y, control, K = 10, Dk = NULL) {
   risk = X[, 1]       # to be used in cIndex
-
+  ibs = 0             # to be used in integrated Brier Score
+  pe  = 0             # to be used in likelihood goodness of fit predErr
   # sort data by survival time
   idx = order(y[, 1])
   y = y[idx, ]
@@ -11,14 +12,11 @@ lple_cvpe = function(X, y, control, K = 10, Dk = NULL, faster = FALSE) {
   if(is.null(Dk)) Dk = sample(c(1:K), n, replace = TRUE)
   else K = max(Dk)
 
-  if (faster) m = 1
-  else m = K 
-
   ctl = control
   pe = 0
   risk = X[, 1]       # to be used in cIndex
 
-  for(i in 1:m) {
+  for(i in 1:K) {
     Xi = X[Dk != i, ]
     yi = y[Dk != i, ]
 	        
@@ -28,21 +26,24 @@ lple_cvpe = function(X, y, control, K = 10, Dk = NULL, faster = FALSE) {
     fit = lple_fit(Xi, yi, ctl, se.fit=FALSE)
    
     prd = predict(fit, X.test, y.test)
+    ibs = ibs + ibs(fit, X.test, y.test)
     # risk score and prediction error
     risk[Dk == i] = prd$risk
     pe = pe + prd$pe
   }
-  if(faster) pe = pe * K
+  ibs = ibs/K
   # Cross-validation C-index
   cidx = survConcordance(y~risk)$concordance
-  return(list(pe=pe, cIndex = cidx))
+  return(list(cIndex = cidx, ibs = ibs, pe = pe))
 }
 
-lple_hSel = function(X, y, control, m = 28, K = 10, parallel = TRUE){
+lple_hSel = function(X, y, control, method = c("ibs", "pe"), m = 28, K = 10, parallel = TRUE){
   #hx = seq(0.025, 0.5, step)
   X = X
   y = y
+  method = match.arg(method)
   control = control
+
   n = length(y[, 1])
   alpha = seq(2, 5, length.out=m)
   hx = n^(-1/alpha)
@@ -53,7 +54,8 @@ lple_hSel = function(X, y, control, m = 28, K = 10, parallel = TRUE){
 
   fn = function(r) {
     control$h = hx[r]
-    pe = lple_cvpe(X, y, control, Dk = Dk)$pe
+    lpe = lple_cvpe(X, y, control, Dk = Dk)
+    pe = switch(method, ibs = lpe$ibs, pe = lpe$pe)
   }
 
   if(parallel) {
