@@ -1,4 +1,4 @@
-\name{ibs.lple}
+\name{ibs}
 \alias{ibs.default}
 \alias{ibs.lple}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -28,6 +28,11 @@ The function ibs is used to calcualte integrated Brier Score for lple.
 \code{\link{lple}}
 }
 \examples{
+### To calculate Brier score for the original fitted data
+#
+#  ibs(fit)
+#
+### To calculate Brier score for new data with new outcomes
 #
 #  ibs(fit, newdata, newy)
 #

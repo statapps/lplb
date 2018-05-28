@@ -37,7 +37,7 @@ lple_cvpe = function(X, y, control, K = 10, Dk = NULL) {
   return(list(cIndex = cidx, ibs = ibs, pe = pe))
 }
 
-lple_hSel = function(X, y, control, method = c("ibs", "pe"), m = 28, K = 10, parallel = TRUE){
+lple_hSel = function(X, y, control, method = c("pe", "ibs"), m = 28, K = 10, parallel = TRUE){
   #hx = seq(0.025, 0.5, step)
   X = X
   y = y

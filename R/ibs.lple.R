@@ -13,6 +13,9 @@ ibs.lple= function(object, newdata=NULL, newy = NULL) {
     newy = y
   } else if(is.null(newy)) 
     stop("To calculate Brier score for newdata, newy cannot be NULL.")
+
+  if(length(newdata[, 1]) != length(newy[, 1])) 
+    stop("New data and new y must have same number of observations.")
   
   sf = predict(object, newdata, newy)
   ## Matrix of survival function S(t) rows: subjects, columns: time
