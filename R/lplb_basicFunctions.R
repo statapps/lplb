@@ -381,10 +381,7 @@ bstrp = function(X, y, control){
     g = try(lple_fit(X_star,y_star,control, maxT=TRUE))
     # use another set of bootstrap if coxph does not converge within 100 iter
     if(class(g) == "try-error") next
-    # next halts the processing of the current iteration and advances the looping index.
     mTstar[i] = g$maxT
-    #cat('i = ', i, mTstar[i], '\n') # for inspection
-    #cat(' ', i, ',',sep = "") # for simplified inspection
     if((i %% Bn)==0) cat('.')
     i = i + 1
   }

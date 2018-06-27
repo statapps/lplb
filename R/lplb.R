@@ -102,6 +102,6 @@ print.lplb <- function(x, ...){
   print(opmtrx)
   print(x$runningtime)
   cat('p1 =', p1, '; Bootstrap times =', x$B, '\n')
-  cat('Kernel type:',x$kernel, '; Bandwidth (h) = ',x$h, '\n')
+  cat('Kernel type:',control$kernel, '; Bandwidth (h) = ',control$h, '\n')
   cat('Statistic Q1 =', x$Q1, '; p_value =', x$pvalue, '\n')
 }
