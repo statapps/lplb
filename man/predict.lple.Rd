@@ -1,6 +1,5 @@
 \name{predict.lple}
 \alias{predict.lple}
-\alias{predict}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 predict a lple object

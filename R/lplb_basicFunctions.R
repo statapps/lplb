@@ -252,6 +252,8 @@ lple_fit = function(X, y, control, se.fit = TRUE, maxT=FALSE) {
   m = length(w_est) # number of estimate points; choose from intervel (0,1) arbitrarily
   X = as.matrix(X)    # coxph() need X to be class matrix
   w = X[ ,p+1] # w from data matric
+  wt= unique(w)
+  if(length(wt) < 3) stop("Biomaker shall be a continuous variable, please check formula: y~trt+biomarker\n")
   id = 1:n
 
   ## X_fai is the data of the interaction model (H1), estimator is beta(w)
@@ -275,16 +277,18 @@ lple_fit = function(X, y, control, se.fit = TRUE, maxT=FALSE) {
   tm = y[j, 1]
   if((j[1]-j[2])*(tm[1]-tm[2])<0) 
     stop("Survival time shall be sorted! Check your program or use lple() directly")
+
   for (i in 1:m) {
     w0 = w_est[i]
     wg = K_func(w, w0, h, kernel)
 
-    XR = interaction_X_w0(X,p1,w0)
+    XR = interaction_X_w0(X, p1, w0)
     fit = coxph(y ~ XR+cluster(id), subset= (wg>0), weights=wg)
     betaw[i, ] = fit$coef
     V = sqrt(diag(vcov(fit)))
     sd[i, ] = V[selb]
     dbeta_sd[i, ] = V[seldb]
+
     #fit = coxph(y ~ X_fai, subset= (wg>0), weights=wg)
   }
   beta_w[, 1:p1]  = betaw[, selb]
@@ -374,7 +378,7 @@ bstrp = function(X, y, control){
     time_star   = 1:n
     y_star      = Surv(time_star, status_star)
 
-    g = try(lple_fit(X_star,y_star,control))
+    g = try(lple_fit(X_star,y_star,control, maxT=TRUE))
     # use another set of bootstrap if coxph does not converge within 100 iter
     if(class(g) == "try-error") next
     # next halts the processing of the current iteration and advances the looping index.

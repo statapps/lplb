@@ -25,7 +25,7 @@ lplb.default <- function(x, y, control, ...){
   X[ ,p+1]=x.cdf(X[ ,p+1])
   X = as.matrix(X)
   
-  fit = lple_fit(X, y, control)
+  fit = lple_fit(X, y, control, maxT=TRUE)
   Q1 = fit$maxT
   sd = fit$sd
   cat('Q1 = ', Q1, '\n')

@@ -1,4 +1,5 @@
 \name{ibs}
+\alias{ibs}
 \alias{ibs.default}
 \alias{ibs.lple}
 %- Also NEED an '\alias' for EACH other topic documented here.

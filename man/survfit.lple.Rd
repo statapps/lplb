@@ -1,6 +1,5 @@
 \name{survfit.lple}
 \alias{survfit.lple}
-\alias{survfit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Compute a Survival Curve from a Local Linear Partial Likelihood Estimate. 
