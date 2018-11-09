@@ -20,7 +20,7 @@ lple.default <- function(x, y, control, ...){
   fit = lple_fit(X, y, control)
   sd = fit$sd
   fit$w = w
-  fit$B = B
+  fit$B = control$B
   fit$call <- match.call()
   class(fit) <- "lple"
   
