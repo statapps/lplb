@@ -16,21 +16,20 @@ rcumsum=function(x) rev(cumsum(rev(x))) # sum from last to first
 .appxf = function(y, x, xout){ approx(x,y,xout=xout,rule=2)$y }
 
 ## 01_2) Kernel function
-K_func<-function(w, u, h, kernel = c("gaussian", "epanechnikov", "rectangular", "triangular", "biweight", "cosine", "optcosine")) {
+K_func<-function(w, u, h, kernel = c("epanechnikov", "gaussian", "rectangular", "triangular", "biweight", "cosine", "optcosine")) {
   kernel = match.arg(kernel)
   x = w-u
   ax = abs(x)
   esp = 1e-40
 
-  kh = switch(kernel, gaussian = ifelse(ax < 5*h, dnorm(x, sd = h/2), esp), # I would set the default for guassian
+  kh = switch(kernel, gaussian = ifelse(ax < 5*h, dnorm(x, sd = h), esp),
          rectangular = ifelse(ax < h, 0.5/h, esp), 
          triangular = ifelse(ax < h, (1 - ax/h)/h, esp),
-         epanechnikov = ifelse(ax < h, 3/4 * (1 - (ax/h)^2)/h, esp), ## This was the kernel that we used before
+         epanechnikov = ifelse(ax < h, 3/4 * (1 - (ax/h)^2)/h, esp),
          biweight = ifelse(ax < h, 15/16 * (1 - (ax/h)^2)^2/h, esp),
          cosine = ifelse(ax < h, (1 + cos(pi * x/h))/(2*h), esp),
          optcosine = ifelse(ax < h, pi/4 * cos(pi * x/(2*h))/h, esp)
          )
-  # in previous version, only epanechnikov kernel can be used.
   # kh = (3*(1-((w-u)/h)^2)/4*(abs((w-u)/h)<1)+(abs((w-u)/h)>=1)*1e-40)/h
   return(kh)
 }
